@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-for="(item, key) in itemsOnPage" :key="key">
-      {{ (currentPage - 1) * 10 + (key + 1) }} {{ item.date }} {{ item.category }} {{ item.value }}
+      {{ item.id }} {{ item.date }} {{ item.category }} {{ item.value }}
     </div>
     <button
       @click="currentPage > 1 ? currentPage-- : '' "
@@ -14,7 +14,7 @@
       </button>
     </div>
     <button
-      @click="getPaymentListLength > endPage ? currentPage++ : ''"
+      @click="getPaymentListLength > currentPage ? currentPage++ : ''"
     >
       Next
     </button>
@@ -22,21 +22,16 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'PaymentList',
   data () {
     return {
-      list: [],
-      currentPage: 1,
-      maxItemOnPage: 10
+      currentPage: 1
     }
   },
   watch: {
-    getPaymentList () {
-      this.list = this.getPaymentList
-    },
     itemsOnPage () {
       if (this.itemsOnPage.length === 0 && this.currentPage > 1) {
         this.currentPage--
@@ -45,27 +40,24 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'getPaymentList', 'getPaymentListLength'
+      'getPaymentListLength', 'getPaymentsListData'
     ]),
-    startPage () {
-      return (this.currentPage - 1) * this.maxItemOnPage
-    },
-    endPage () {
-      return this.currentPage * this.maxItemOnPage
-    },
     itemsOnPage () {
-      const itemsOnPage = this.list
-        .slice(this.startPage, this.endPage)
-
+      const itemsOnPage = this.getPaymentsListData(this.currentPage)
       return itemsOnPage
     },
     pages () {
       const num = this.getPaymentListLength
-      return Math.ceil(num / 10)
+      return num
     }
   },
+  methods: {
+    ...mapActions([
+      'fetchFromGithub'
+    ])
+  },
   created () {
-    this.list = this.getPaymentList
+    this.fetchFromGithub()
   }
 }
 </script>

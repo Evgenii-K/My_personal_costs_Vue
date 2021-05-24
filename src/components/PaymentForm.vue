@@ -3,7 +3,7 @@
     <form v-on:submit.prevent="add">
       <div @click="descriptionEmpty = false">
         <select v-model="itemList.description">
-           <option disabled value="">Payment description</option>
+          <option disabled value="">Payment description</option>
           <option v-for="(option, key) in options" :key="key">
             {{ option }}
           </option>

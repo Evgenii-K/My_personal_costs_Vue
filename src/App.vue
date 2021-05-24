@@ -12,7 +12,6 @@
 <script>
 import PaymentForm from './components/PaymentForm.vue'
 import PaymentList from './components/PaymentList.vue'
-import { mapActions } from 'vuex'
 
 export default {
   name: 'App',
@@ -24,15 +23,6 @@ export default {
     return {
       showForm: false
     }
-  },
-  methods: {
-    ...mapActions([
-      'fetchPaymentList', 'fetchFromGithub'
-    ])
-  },
-  created () {
-    this.fetchPaymentList()
-    this.fetchFromGithub()
   }
 }
 </script>
