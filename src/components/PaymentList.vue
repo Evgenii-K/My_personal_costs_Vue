@@ -22,19 +22,20 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'PaymentList',
   data () {
     return {
+      list: [],
       currentPage: 1
     }
   },
-  props: {
-    list: {
-      type: Array
-    }
-  },
   watch: {
+    getPaymentList () {
+      this.list = this.getPaymentList
+    },
     itemsOnPage () {
       if (this.itemsOnPage.length === 0 && this.currentPage > 1) {
         this.currentPage--
@@ -42,6 +43,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters([
+      'getPaymentList'
+    ]),
     startPage () {
       return (this.currentPage - 1) * 10
     },
@@ -58,6 +62,9 @@ export default {
       const num = this.list.length
       return Math.ceil(num / 10)
     }
+  },
+  created () {
+    this.list = this.getPaymentList
   }
 }
 </script>
