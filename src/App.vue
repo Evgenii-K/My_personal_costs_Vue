@@ -4,10 +4,7 @@
       My personal costs
     </header>
     <button @click="showForm = !showForm">ADD NEW COST +</button>
-    <PaymentForm
-      @addToList="addToList"
-      v-show="showForm"
-    />
+    <PaymentForm />
     <PaymentList />
   </div>
 </template>
@@ -15,7 +12,7 @@
 <script>
 import PaymentForm from './components/PaymentForm.vue'
 import PaymentList from './components/PaymentList.vue'
-import { mapActions, mapMutations } from 'vuex'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'App',
@@ -29,9 +26,6 @@ export default {
     }
   },
   methods: {
-    ...mapMutations([
-      'addToList'
-    ]),
     ...mapActions([
       'fetchPaymentList'
     ])
