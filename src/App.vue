@@ -4,7 +4,7 @@
       My personal costs
     </header>
     <button @click="showForm = !showForm">ADD NEW COST +</button>
-    <PaymentForm />
+    <PaymentForm v-show="showForm"/>
     <PaymentList />
   </div>
 </template>
@@ -27,11 +27,12 @@ export default {
   },
   methods: {
     ...mapActions([
-      'fetchPaymentList'
+      'fetchPaymentList', 'fetchFromGithub'
     ])
   },
   created () {
     this.fetchPaymentList()
+    this.fetchFromGithub()
   }
 }
 </script>

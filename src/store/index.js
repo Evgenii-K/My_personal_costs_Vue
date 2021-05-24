@@ -20,7 +20,8 @@ export default new Vuex.Store({
     }
   },
   getters: {
-    getPaymentList: state => state.paymentList
+    getPaymentList: state => state.paymentList,
+    getPaymentListLength: state => state.paymentList.length
   },
   actions: {
     fetchData ({ commit }) {
@@ -57,6 +58,11 @@ export default new Vuex.Store({
         }
       ]
       commit('setPaymentList', list)
+    },
+    fetchFromGithub () {
+      fetch('https://raw.githubusercontent.com/Evgenii-K/My_personal_costs_Vue/tree/Lesson_4/public/database/paymentList.json')
+        .then(res => res.json())
+        .then(list => console.log(list))
     }
   }
 })

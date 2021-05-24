@@ -14,7 +14,7 @@
       </button>
     </div>
     <button
-      @click="list.length > endPage ? currentPage++ : ''"
+      @click="getPaymentListLength > endPage ? currentPage++ : ''"
     >
       Next
     </button>
@@ -29,7 +29,8 @@ export default {
   data () {
     return {
       list: [],
-      currentPage: 1
+      currentPage: 1,
+      maxItemOnPage: 10
     }
   },
   watch: {
@@ -44,13 +45,13 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'getPaymentList'
+      'getPaymentList', 'getPaymentListLength'
     ]),
     startPage () {
-      return (this.currentPage - 1) * 10
+      return (this.currentPage - 1) * this.maxItemOnPage
     },
     endPage () {
-      return this.currentPage * 10
+      return this.currentPage * this.maxItemOnPage
     },
     itemsOnPage () {
       const itemsOnPage = this.list
@@ -59,7 +60,7 @@ export default {
       return itemsOnPage
     },
     pages () {
-      const num = this.list.length
+      const num = this.getPaymentListLength
       return Math.ceil(num / 10)
     }
   },
