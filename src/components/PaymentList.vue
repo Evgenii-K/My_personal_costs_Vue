@@ -33,6 +33,8 @@ export default {
   },
   watch: {
     itemsOnPage () {
+      this.fetchFromServe(this.currentPage)
+      if (!this.itemsOnPage) return
       if (this.itemsOnPage.length === 0 && this.currentPage > 1) {
         this.currentPage--
       }
@@ -53,11 +55,12 @@ export default {
   },
   methods: {
     ...mapActions([
-      'fetchFromGithub'
+      'fetchPaymentsListLength', 'fetchFromServe'
     ])
   },
   created () {
-    this.fetchFromGithub()
+    this.fetchPaymentsListLength()
+    this.fetchFromServe(this.currentPage)
   }
 }
 </script>
