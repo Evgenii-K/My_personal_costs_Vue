@@ -1,7 +1,10 @@
 <template>
-  <div>
-    <div v-for="(item, key) in itemsOnPage" :key="key">
-      {{ item.id }} {{ item.date }} {{ item.category }} {{ item.value }}
+  <div :class="$style.paymentList">
+    <div v-for="(item, key) in itemsOnPage" :key="key" :class="$style.itemName">
+      <div :class="$style.itemName__id">{{ item.id }}</div>
+      <div :class="$style.itemName__date">{{ item.date }}</div>
+      <div :class="$style.itemName__cat">{{ item.category }}</div>
+      <div :class="$style.itemName__value">{{ item.value }}</div>
     </div>
     <button
       @click="currentPage > 1 ? currentPage-- : '' "
@@ -65,6 +68,37 @@ export default {
 }
 </script>
 
-<style>
+<style module lang="scss">
+  .paymentList {}
 
+  .itemName {
+    font-size: 12px;
+    font-weight: 500;
+    padding-top: 5px;
+    padding-bottom: 5px;
+
+    &__id {
+      display: inline-block;
+      min-width: 30px;
+    }
+
+    &__date {
+      display: inline-block;
+      min-width: 150px;
+    }
+
+    &__cat {
+      display: inline-block;
+      min-width: 250px;
+    }
+
+    &__value {
+      display: inline-block;
+      min-width: 100px;
+    }
+
+    // &:not(:last-child) {
+    //   border-bottom: 1px solid lightgray;
+    // }
+  }
 </style>
