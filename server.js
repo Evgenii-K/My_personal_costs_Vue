@@ -9,7 +9,7 @@ app.use(bodyParser.json())
 
 app.get('/database/:page', (req, res) => {
   const page = req.params.page
-  fs.readFile('./public/database/paymentList.json', 'utf8', (err, data) => {
+  fs.readFile('./dist/database/paymentList.json', 'utf8', (err, data) => {
     if (err) {
       console.log(`Oops: ${err}`)
     }
@@ -22,7 +22,7 @@ app.get('/database/:page', (req, res) => {
 })
 
 app.get('/lengthList', (req, res) => {
-  fs.readFile('./public/database/paymentList.json', 'utf8', (err, data) => {
+  fs.readFile('./dist/database/paymentList.json', 'utf8', (err, data) => {
     if (err) {
       console.log(`Get length err: ${err}`)
     }
@@ -34,7 +34,7 @@ app.get('/lengthList', (req, res) => {
 })
 
 app.post('/fetchAddToList', (req, res) => {
-  const filePath = './public/database/paymentListNew.json'
+  const filePath = './dist/database/paymentList.json'
   let item = req.body
 
   fs.readFile(filePath, 'utf8', (err, data) => {

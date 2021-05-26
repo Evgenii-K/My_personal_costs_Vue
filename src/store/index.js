@@ -15,9 +15,9 @@ export default new Vuex.Store({
       state.newItem = payload
     },
     addToPaymentsListData (state, payload) {
-      const payloadKey = Object.keys(payload.newPage)[0]
-      for (const key of Object.keys(state.paymentsListData)) {
-        if (key === payloadKey) return
+      const payloadValue = Object.values(payload.newPage)[1]
+      for (const value of Object.values(state.paymentsListData)) {
+        if (value === payloadValue) return
       }
       state.paymentsListData = { ...state.paymentsListData, ...payload.newPage }
     },
@@ -54,15 +54,16 @@ export default new Vuex.Store({
       commit('setNewItem', item)
       dispatch('fetchAddToList')
     },
-    fetchAddToList ({ state }) {
+    async fetchAddToList ({ state, dispatch }) {
       const item = state.newItem
-      fetch('/fetchAddToList', {
+      await fetch('/fetchAddToList', {
         method: 'post',
         body: JSON.stringify(item),
         headers: {
           'Content-Type': 'application/json'
         }
       })
+      await dispatch('fetchPaymentsListLength')
     }
   }
 })
