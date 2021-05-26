@@ -7,12 +7,13 @@ export default new Vuex.Store({
   state: {
     paymentsListData: {},
     paymentsListLength: 0,
-    paymentList: []
+    paymentList: [],
+    newItem: {}
   },
   mutations: {
-    // setPaymentsListData (state, payload) {
-    //   state.paymentsListData = payload
-    // },
+    setNewItem (state, payload) {
+      state.newItem = payload
+    },
     addToPaymentsListData (state, payload) {
       const payloadKey = Object.keys(payload.newPage)[0]
       for (const key of Object.keys(state.paymentsListData)) {
@@ -23,15 +24,13 @@ export default new Vuex.Store({
     setPaymentListLength (state, payload) {
       state.paymentsListLength = payload
     }
-    // addToList (state, payload) {
-    //   state.paymentList = [...state.paymentList, payload]
-    // }
   },
   getters: {
     getPaymentListLength: state => state.paymentsListLength,
     getPaymentsListData: state => pageNumber => {
       return state.paymentsListData[`page${pageNumber}`]
-    }
+    },
+    getNewItem: state => state.newItem
   },
   actions: {
     fetchFromGithub ({ commit }) {
@@ -50,6 +49,20 @@ export default new Vuex.Store({
         .then(length => {
           commit('setPaymentListLength', length)
         })
+    },
+    addItem ({ commit, dispatch }, item) {
+      commit('setNewItem', item)
+      dispatch('fetchAddToList')
+    },
+    fetchAddToList ({ state }) {
+      const item = state.newItem
+      fetch('/fetchAddToList', {
+        method: 'post',
+        body: JSON.stringify(item),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
     }
   }
 })

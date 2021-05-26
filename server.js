@@ -33,26 +33,48 @@ app.get('/lengthList', (req, res) => {
   })
 })
 
-// app.get('/cartlist', (req, res) => {
-//     fs.readFile('./public/database/cartlist.json', 'utf8', (err, data) => {
-//         if (err) {
-//             console.log(`Oops: ${err}`);
-//         }
-//         res.send(data);
-//     });
-// });
+app.post('/fetchAddToList', (req, res) => {
+  const filePath = './public/database/paymentListNew.json'
+  let item = req.body
 
-// app.post('/cartlist', (req, res) => {
-//   const filePath = './public/database/cartlist.json'
-//   const data = req.body
+  fs.readFile(filePath, 'utf8', (err, data) => {
+    if (err) {
+      console.log(`Read file err: ${err}`)
+    }
 
-//     fs.writeFile(filePath, JSON.stringify(data), (err) => {
-//         if (err) {
-//             console.log(`Oops: ${err}`);
-//         }
-//         res.send(data);
-//     });
-// });
+    data = JSON.parse(data)
+    data = Object.entries(data)
+
+    // Определяем количество элементов на последней странице
+    const lastPageLength = data[data.length - 1][1].length
+
+    // Определяем id последнего элемента списка и добавляем следующий id к новому элементу
+    const lastId = data[data.length - 1][1][lastPageLength - 1].id
+    const newId = ['id', lastId + 1]
+
+    // Добавляем id к новому элементу списка
+    item = Object.entries(item)
+    item.unshift(newId)
+    item = Object.fromEntries(item)
+
+    // Если последняя страница не заполнена заполняем её, иначе заполняем новую
+    if (lastPageLength < 3) {
+      data[data.length - 1][1].push(item)
+    } else {
+      const newPage = [`page${data.length + 1}`, [item]]
+      data.push(newPage)
+    }
+
+    data = Object.fromEntries(data)
+
+    fs.writeFile(filePath, JSON.stringify(data), (err) => {
+      if (err) {
+        console.log(`Error write: ${err}`)
+      }
+      res.send(item)
+    })
+  })
+})
 
 app.listen(port, (err) => {
   if (err) {

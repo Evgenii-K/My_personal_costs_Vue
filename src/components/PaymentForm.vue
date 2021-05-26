@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'PaymentForm',
@@ -42,8 +42,8 @@ export default {
     }
   },
   methods: {
-    ...mapMutations([
-      'addToList'
+    ...mapActions([
+      'addItem'
     ]),
     getCurrentDate () {
       const today = new Date()
@@ -68,7 +68,7 @@ export default {
         value: this.itemList.amount
       }
 
-      this.addToList(newItem)
+      this.addItem(newItem)
     }
   }
 }
