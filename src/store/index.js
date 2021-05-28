@@ -38,6 +38,12 @@ export default new Vuex.Store({
         .then(res => res.json())
         .then(pages => commit('setPaymentsListData', pages))
     },
+    fetchCurrentPage ({ state, dispatch }, page) {
+      const currentPage = `page${page}`
+      if (!(currentPage in state.paymentsListData)) {
+        dispatch('fetchFromServe', page)
+      }
+    },
     fetchFromServe ({ commit }, page) {
       fetch(`/database/${page}`)
         .then(res => res.json())

@@ -44,7 +44,6 @@ export default {
   },
   watch: {
     itemsOnPage () {
-      // this.fetchFromServe(this.currentPage)
       if (!this.itemsOnPage) return
       if (this.itemsOnPage.length === 0 && this.currentPage > 1) {
         this.currentPage--
@@ -57,21 +56,20 @@ export default {
     ]),
     itemsOnPage () {
       const itemsOnPage = this.getPaymentsListData(this.currentPage)
-      // this.fetchFromServe(this.currentPage)
       return itemsOnPage
     },
     pages () {
       const num = this.getPaymentListLength
-      this.fetchFromServe(this.currentPage)
+      this.fetchCurrentPage(this.currentPage)
       return num
     }
   },
   methods: {
     ...mapActions([
-      'fetchPaymentsListLength', 'fetchFromServe'
+      'fetchPaymentsListLength', 'fetchFromServe', 'fetchCurrentPage'
     ])
   },
-  created () {
+  mounted () {
     this.fetchPaymentsListLength()
     this.fetchFromServe(this.currentPage)
   }
