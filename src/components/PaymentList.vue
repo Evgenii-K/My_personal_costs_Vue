@@ -1,10 +1,18 @@
 <template>
-  <div :class="$style.paymentList">
-    <div v-for="(item, key) in itemsOnPage" :key="key" :class="$style.itemName">
-      <div :class="$style.itemName__id">{{ item.id }}</div>
-      <div :class="$style.itemName__date">{{ item.date }}</div>
-      <div :class="$style.itemName__cat">{{ item.category }}</div>
-      <div :class="$style.itemName__value">{{ item.value }}</div>
+  <div>
+    <header>
+      <div :class="[$style.item__id, $style.item__header]">&#35;</div>
+      <div :class="[$style.item__date, $style.item__header]">Date</div>
+      <div :class="[$style.item__cat, $style.item__header]">Category</div>
+      <div :class="[$style.item__value, $style.item__header]">Value</div>
+    </header>
+    <div :class="$style.paymentList">
+      <div v-for="(item, key) in itemsOnPage" :key="key" :class="$style.itemName">
+        <div :class="[$style.item__id, $style.item]">{{ item.id }}</div>
+        <div :class="[$style.item__date, $style.item]">{{ item.date }}</div>
+        <div :class="[$style.item__cat, $style.item]">{{ item.category }}</div>
+        <div :class="[$style.item__value, $style.item]">{{ item.value }}</div>
+      </div>
     </div>
     <button
       @click="currentPage > 1 ? currentPage-- : '' "
@@ -36,7 +44,7 @@ export default {
   },
   watch: {
     itemsOnPage () {
-      this.fetchFromServe(this.currentPage)
+      // this.fetchFromServe(this.currentPage)
       if (!this.itemsOnPage) return
       if (this.itemsOnPage.length === 0 && this.currentPage > 1) {
         this.currentPage--
@@ -49,10 +57,12 @@ export default {
     ]),
     itemsOnPage () {
       const itemsOnPage = this.getPaymentsListData(this.currentPage)
+      // this.fetchFromServe(this.currentPage)
       return itemsOnPage
     },
     pages () {
       const num = this.getPaymentListLength
+      this.fetchFromServe(this.currentPage)
       return num
     }
   },
@@ -73,7 +83,7 @@ export default {
     width: 550px;
   }
 
-  .itemName {
+  .item {
     font-size: 16px;
     font-weight: 500;
     padding-top: 5px;
@@ -98,6 +108,13 @@ export default {
     &__value {
       display: inline-block;
       min-width: 100px;
+    }
+
+    &__header {
+      font-size: 16px;
+      font-weight: 900;
+      padding-top: 5px;
+      padding-bottom: 5px;
     }
   }
 </style>

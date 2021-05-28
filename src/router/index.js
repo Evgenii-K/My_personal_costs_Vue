@@ -1,17 +1,22 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-import PageDashboard from '../pages/PageDashboard'
-import PageAbout from '../pages/PageAbout'
-import Page404 from '../pages/Page404'
+import PageDashboard from '../components/pages/PageDashboard'
+import PageAbout from '../components/pages/PageAbout'
+import Page404 from '../components/pages/Page404'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   mode: 'history',
   routes: [
     {
       path: '/dashboard',
+      name: 'dashboard',
+      component: PageDashboard
+    },
+    {
+      path: '/dashboard/:value',
       name: 'dashboard',
       component: PageDashboard
     },
@@ -27,3 +32,5 @@ export default new Router({
     }
   ]
 })
+
+export default router

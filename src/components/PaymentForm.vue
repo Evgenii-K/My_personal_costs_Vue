@@ -3,7 +3,7 @@
     <form v-on:submit.prevent="add">
       <div @click="descriptionEmpty = false">
         <select v-model="itemList.description">
-          <option disabled value="">Payment description</option>
+          <option value="" disabled selected hidden>Payment description</option>
           <option v-for="(option, key) in options" :key="key">
             {{ option }}
           </option>
@@ -38,7 +38,17 @@ export default {
         date: ''
       },
       descriptionEmpty: false,
-      options: ['Food', 'Shoes', 'Cellular']
+      options: ['Food', 'Shoes', 'Cellular', 'Entertainment', 'Transport']
+    }
+  },
+  watch: {
+    $route (to, from) {
+      if (to.params.value) {
+        this.itemList.description = to.params.value
+        this.itemList.amount = +to.query.price
+        this.add()
+        this.$router.push({ name: 'dashboard' })
+      }
     }
   },
   methods: {

@@ -1,5 +1,8 @@
 <template>
   <div>
+    <div><router-link to="/dashboard/Food?price=200">Add Food</router-link></div>
+    <div><router-link to="/dashboard/Transport?price=50">Add Transport</router-link></div>
+    <div><router-link to="/dashboard/Entertainment?price=2000">Add Entertainment</router-link></div>
     <button @click="showForm = !showForm" :class="$style.btn__add">ADD NEW COST +</button>
     <PaymentForm v-show="showForm"/>
     <PaymentList />
@@ -7,8 +10,8 @@
 </template>
 
 <script>
-import PaymentList from '../components/PaymentList'
-import PaymentForm from '../components/PaymentForm'
+import PaymentList from '../PaymentList'
+import PaymentForm from '../PaymentForm'
 
 export default {
   components: {

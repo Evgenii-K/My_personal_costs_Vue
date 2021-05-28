@@ -6,7 +6,6 @@
     <nav>
       <router-link to="/dashboard">Dashboard</router-link>
       <router-link to="/about">About</router-link>
-      <router-link to="/404">404</router-link>
     </nav>
     <main>
       <router-view />
@@ -23,7 +22,9 @@ export default {
     }
   },
   mounted () {
-    this.$router.push({ name: 'dashboard' })
+    if (this.$route.path === '/' || this.$route.params.value) {
+      this.$router.push({ name: 'dashboard' })
+    }
   }
 }
 </script>
