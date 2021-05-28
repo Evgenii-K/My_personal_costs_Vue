@@ -69,13 +69,16 @@ export default {
 </script>
 
 <style module lang="scss">
-  .paymentList {}
+  .paymentList {
+    width: 550px;
+  }
 
   .itemName {
-    font-size: 12px;
+    font-size: 16px;
     font-weight: 500;
     padding-top: 5px;
     padding-bottom: 5px;
+    border-top: 1px solid lightgray;
 
     &__id {
       display: inline-block;
@@ -96,9 +99,5 @@ export default {
       display: inline-block;
       min-width: 100px;
     }
-
-    // &:not(:last-child) {
-    //   border-bottom: 1px solid lightgray;
-    // }
   }
 </style>
