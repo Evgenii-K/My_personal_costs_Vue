@@ -16,8 +16,8 @@ const router = new Router({
       component: PageDashboard
     },
     {
-      path: '/dashboard/:value',
-      name: 'dashboard',
+      path: '/add/payment/:description',
+      name: 'addPayment',
       component: PageDashboard
     },
     {

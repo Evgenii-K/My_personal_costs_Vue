@@ -1,4 +1,4 @@
-// const fallback = require('express-history-api-fallback')
+// const history = require('connect-history-api-fallback')
 const fs = require('fs')
 const express = require('express')
 const bodyParser = require('body-parser')
@@ -10,7 +10,7 @@ const root = `${__dirname}/dist`
 
 app.use(express.static(root))
 app.use(bodyParser.json())
-// app.use(fallback('index.html', { root }))
+// app.use(history())
 
 app.get('/database/:page', (req, res) => {
   const page = req.params.page
@@ -38,7 +38,8 @@ app.get('/lengthList', (req, res) => {
   })
 })
 
-app.post('/fetchAddToList', (req, res) => {
+// Добавленеие элемента списка
+app.post('/addToList', (req, res) => {
   const filePath = './dist/database/paymentList.json'
   let item = req.body
 

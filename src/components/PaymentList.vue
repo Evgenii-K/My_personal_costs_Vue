@@ -56,11 +56,11 @@ export default {
     ]),
     itemsOnPage () {
       const itemsOnPage = this.getPaymentsListData(this.currentPage)
+      this.fetchCurrentPage(this.currentPage)
       return itemsOnPage
     },
     pages () {
       const num = this.getPaymentListLength
-      this.fetchCurrentPage(this.currentPage)
       return num
     }
   },
@@ -71,7 +71,6 @@ export default {
   },
   mounted () {
     this.fetchPaymentsListLength()
-    this.fetchFromServe(this.currentPage)
   }
 }
 </script>
