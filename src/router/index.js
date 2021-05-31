@@ -8,11 +8,16 @@ import Page404 from '../components/pages/Page404'
 Vue.use(Router)
 
 const router = new Router({
-  mode: 'history',
+//   mode: 'history',
   routes: [
     {
       path: '/dashboard',
       name: 'dashboard',
+      component: PageDashboard
+    },
+    {
+      path: '/dashboard/:page',
+      name: 'pagination',
       component: PageDashboard
     },
     {

@@ -17,13 +17,15 @@
     <button
       @click="currentPage > 1 ? currentPage-- : '' "
     >
-      Previous
+      Previous {{ currentPage }}
     </button>
-    <div v-for="n in pages" :key="'Page' + n">
-      <button @click="currentPage = n">
-        {{ n }}
-      </button>
-    </div>
+    <router-link
+      :to="`/dashboard/${page}`"
+      v-for="page in pages"
+      :key="'Page' + page"
+    >
+      {{ page }}
+    </router-link>
     <button
       @click="getPaymentListLength > currentPage ? currentPage++ : ''"
     >
@@ -39,7 +41,7 @@ export default {
   name: 'PaymentList',
   data () {
     return {
-      currentPage: 1
+      currentPage: 2
     }
   },
   watch: {
@@ -47,6 +49,11 @@ export default {
       if (!this.itemsOnPage) return
       if (this.itemsOnPage.length === 0 && this.currentPage > 1) {
         this.currentPage--
+      }
+    },
+    $route (to) {
+      if (to.params.page) {
+        this.currentPage = +to.params.page
       }
     }
   },

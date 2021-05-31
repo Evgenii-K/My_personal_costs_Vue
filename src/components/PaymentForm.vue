@@ -62,7 +62,6 @@ export default {
           this.itemList.amount = +to.query.value
           this.add()
         }
-        this.$router.push({ name: 'dashboard' })
       }
     }
   },
