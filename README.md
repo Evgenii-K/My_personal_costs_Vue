@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # my_personal_costs_vue
 
 ## Project setup
