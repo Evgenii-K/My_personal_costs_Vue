@@ -14,11 +14,11 @@
         <div :class="[$style.item__value, $style.item]">{{ item.value }}</div>
       </div>
     </div>
-    <button
-      @click="currentPage > 1 ? currentPage-- : '' "
+    <router-link
+      :to="{ name: 'pagination', params: { page: currentPage > 1 ? currentPage - 1 : 1}}"
     >
-      Previous {{ currentPage }}
-    </button>
+      Previous
+    </router-link>
     <router-link
       :to="`/dashboard/${page}`"
       v-for="page in pages"
@@ -26,11 +26,11 @@
     >
       {{ page }}
     </router-link>
-    <button
-      @click="getPaymentListLength > currentPage ? currentPage++ : ''"
+    <router-link
+      :to="{ name: 'pagination', params: { page: getPaymentListLength > currentPage ? currentPage + 1 : currentPage}}"
     >
       Next
-    </button>
+    </router-link>
   </div>
 </template>
 
@@ -41,7 +41,7 @@ export default {
   name: 'PaymentList',
   data () {
     return {
-      currentPage: 2
+      currentPage: 1
     }
   },
   watch: {
@@ -88,7 +88,7 @@ export default {
   }
 
   .item {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 500;
     padding-top: 5px;
     padding-bottom: 5px;

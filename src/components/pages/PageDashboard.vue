@@ -1,8 +1,14 @@
 <template>
   <div>
-    <div><router-link to="/add/payment/Food?value=200">Add Food</router-link></div>
-    <div><router-link to="/add/payment/Transport?value=50">Add Transport</router-link></div>
-    <div><router-link to="/add/payment/Entertainment?value=">Add Entertainment</router-link></div>
+    <div>
+      <router-link
+        v-for="(value, key) in descriptionTemplate"
+        :key="key"
+        :to="`/add/payment/${key}?value=${value}`"
+      >
+        Add {{ key }}
+      </router-link>
+    </div>
     <button @click="showForm = !showForm" :class="$style.btn__add">ADD NEW COST +</button>
     <PaymentForm v-show="showForm"/>
     <PaymentList />
@@ -20,7 +26,12 @@ export default {
   },
   data () {
     return {
-      showForm: false
+      showForm: false,
+      descriptionTemplate: {
+        Food: 200,
+        Transport: 50,
+        Entertainment: ''
+      }
     }
   },
   watch: {

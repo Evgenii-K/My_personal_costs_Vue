@@ -5,11 +5,13 @@
     >
       Previous
     </button>
-    <div v-for="n in pages" :key="'Page' + n">
-      <button @click="currentPage = n">
-        {{ n }}
-      </button>
-    </div>
+    <router-link
+      :to="`/dashboard/${page}`"
+      v-for="page in pages"
+      :key="'Page' + page"
+    >
+      {{ page }}
+    </router-link>
     <button
       @click="getPaymentListLength > currentPage ? currentPage++ : ''"
     >
