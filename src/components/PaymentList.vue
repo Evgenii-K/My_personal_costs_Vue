@@ -14,34 +14,22 @@
         <div :class="[$style.item__value, $style.item]">{{ item.value }}</div>
       </div>
     </div>
-    <router-link
-      :to="{ name: 'pagination', params: { page: currentPage > 1 ? currentPage - 1 : 1}}"
-    >
-      Previous
-    </router-link>
-    <router-link
-      :to="`/dashboard/${page}`"
-      v-for="page in pages"
-      :key="'Page' + page"
-    >
-      {{ page }}
-    </router-link>
-    <router-link
-      :to="{ name: 'pagination', params: { page: getPaymentListLength > currentPage ? currentPage + 1 : currentPage}}"
-    >
-      Next
-    </router-link>
+    <Pagination />
   </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import Pagination from './PyamentPagination'
 
 export default {
   name: 'PaymentList',
+  components: {
+    Pagination
+  },
   data () {
     return {
-      currentPage: 1
+      currentPage: Number
     }
   },
   watch: {
@@ -51,33 +39,29 @@ export default {
         this.currentPage--
       }
     },
-    $route (to) {
-      if (to.params.page) {
-        this.currentPage = +to.params.page
+    '$route.path': function () {
+      if (this.$route.params.page) {
+        this.currentPage = this.$route.params.page
       }
     }
   },
   computed: {
     ...mapGetters([
-      'getPaymentListLength', 'getPaymentsListData'
+      'getPaymentsListData'
     ]),
     itemsOnPage () {
       const itemsOnPage = this.getPaymentsListData(this.currentPage)
       this.fetchCurrentPage(this.currentPage)
       return itemsOnPage
-    },
-    pages () {
-      const num = this.getPaymentListLength
-      return num
     }
   },
   methods: {
     ...mapActions([
-      'fetchPaymentsListLength', 'fetchFromServe', 'fetchCurrentPage'
+      'fetchCurrentPage'
     ])
   },
   mounted () {
-    this.fetchPaymentsListLength()
+    this.currentPage = this.$route.params.page
   }
 }
 </script>
