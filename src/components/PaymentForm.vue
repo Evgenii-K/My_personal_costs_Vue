@@ -118,6 +118,7 @@ export default {
     display: block;
     font-size: 16px;
     font-weight: 500;
+    box-sizing: border-box;
     padding: 5px;
     min-width: 300px;
     margin-bottom: 10px;
@@ -131,7 +132,6 @@ export default {
       -moz-appearance: none;
       -ms-appearance: none;
       appearance: none;
-      min-width: 312px;
       margin-right: 10px;
     }
 
