@@ -4,8 +4,8 @@
       My personal costs
     </header>
     <nav>
-      <router-link to="/dashboard">Dashboard</router-link>
-      <router-link to="/about">About</router-link>
+      <router-link :class="$style.link" to="/dashboard">Dashboard</router-link>
+      <router-link :class="$style.link" to="/about">About</router-link>
     </nav>
     <main>
       <router-view />
@@ -33,5 +33,17 @@ export default {
   .header {
     font-size: 36px;
     font-weight: 700;
+  }
+
+  .link {
+    font-size: 18px;
+    font-weight: 700;
+    color: black;
+    text-decoration: none;
+    margin: 10px;
+
+    &:hover {
+      color: lightskyblue;
+    }
   }
 </style>

@@ -1,16 +1,19 @@
 <template>
   <div>
     <div>
-      <router-link
-        v-for="(value, key) in descriptionTemplate"
-        :key="key"
-        :to="`/add/payment/${key}?value=${value}`"
-      >
-        Add {{ key }}
-      </router-link>
+
     </div>
     <button @click="showForm = !showForm" :class="$style.btn__add">ADD NEW COST +</button>
     <PaymentForm v-show="showForm"/>
+    <router-link
+      v-show="!showForm"
+      :class="[$style.btn__add, $style.btn__add__template]"
+      v-for="(value, key) in descriptionTemplate"
+      :key="key"
+      :to="`/add/payment/${key}?value=${value}`"
+    >
+      {{ key }}
+    </router-link>
     <PaymentList />
   </div>
 </template>
@@ -52,6 +55,7 @@ export default {
     font-weight: 700;
   }
   .btn__add {
+    display: block;
     font-size: 14px;
     font-weight: 500;
     color: whitesmoke;
@@ -74,6 +78,24 @@ export default {
     &:hover {
       transform: translateY(3px) translateX(3px);
       box-shadow: 0px 0px rgba(0, 0, 0, 0.1);
+    }
+
+    &__template {
+      display: inline-block;
+      margin-top: 0;
+      margin-right: 5px;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 3px;
+      box-shadow: 1px 1px rgba(0, 0, 0, 0.1);
+      font-size: 12px;
+      width: 80px;
+      height: 20px;
+      padding-top: 5px;
+
+      &:hover {
+        transform: translateY(1px) translateX(1px);
+      }
     }
   }
 </style>
