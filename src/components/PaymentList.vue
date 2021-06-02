@@ -38,6 +38,7 @@ export default {
     itemsOnPage () {
       this.fetchFromServe(this.currentPage)
       if (!this.itemsOnPage) return
+      // если на странице удалён последний элемент и страница не первая то переходим на предыдущую страницу
       if (this.itemsOnPage.length === 0 && this.currentPage > 1) {
         this.currentPage--
       }
