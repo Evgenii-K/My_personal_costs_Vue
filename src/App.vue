@@ -9,11 +9,15 @@
     </nav>
     <main>
       <router-view />
+      <button @click="showModal('paymentform')">Show form</button>
+      <button @click="showModal('authform')">Show auth</button>
+      <Modal />
     </main>
   </div>
 </template>
 
 <script>
+import Modal from './components/modalwindow/Modal'
 
 export default {
   name: 'App',
@@ -21,9 +25,17 @@ export default {
     return {
     }
   },
+  components: {
+    Modal
+  },
   mounted () {
     if (this.$route.path === '/' || this.$route.params.value) {
       this.$router.push({ name: 'dashboard' })
+    }
+  },
+  methods: {
+    showModal (name) {
+      this.$modal.show(name)
     }
   }
 }
