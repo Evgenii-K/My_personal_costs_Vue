@@ -1,12 +1,12 @@
 <template>
   <div>
-    <div>
-
-    </div>
-    <button @click="showForm = !showForm" :class="$style.btn__add">ADD NEW COST +</button>
-    <PaymentForm v-show="showForm"/>
+    <button
+      @click="$modal.show('paymentform', { x: 50 + '%', y: 50 + '%', overlay: true })"
+      :class="$style.btn__add"
+    >
+      ADD NEW COST +
+    </button>
     <router-link
-      v-show="!showForm"
       :class="[$style.btn__add, $style.btn__add__template]"
       v-for="(value, key) in descriptionTemplate"
       :key="key"
@@ -20,12 +20,10 @@
 
 <script>
 import PaymentList from '../PaymentList'
-import PaymentForm from '../PaymentForm'
 
 export default {
   components: {
-    PaymentList,
-    PaymentForm
+    PaymentList
   },
   data () {
     return {
@@ -40,9 +38,7 @@ export default {
   watch: {
     $route (to) {
       if (to.params.description) {
-        if (!to.query.value) {
-          this.showForm = true
-        }
+        this.$modal.show('paymentform', { x: 50 + '%', y: 50 + '%', overlay: true })
       }
     }
   }

@@ -1,41 +1,56 @@
 <template>
-  <div class="wrapper" v-if="shown">
-        <PaymentForm v-if="shown === 'paymentform'" />
-        <AuthForm v-if="shown === 'authform'" />
-        <Context v-if="shown === 'context'" />
+  <div class="content">
+    <div
+      :class="$style.wrapper"
+      :style="{left: setting.x, top: setting.y}"
+    >
+      <PaymentForm v-if="name === 'paymentform'" />
+      <Context v-if="name === 'context'" />
+    </div>
+    <div
+      :class="[$style.overlay, setting.overlay != '' ? $style.overlay__background : '']"
+      @click="$modal.close()"
+    >
+    </div>
   </div>
 </template>
 
 <script>
 import PaymentForm from '../PaymentForm'
-import AuthForm from '../AuthForm'
 import Context from './Context'
 
 export default {
   data () {
     return {
-      shown: ''
     }
+  },
+  props: {
+    name: String,
+    setting: Object
   },
   components: {
     PaymentForm,
-    AuthForm,
     Context
-  },
-  props: {
-    setting: Object
-  },
-  methods: {
-    onShow ({ name }) {
-      this.shown = name
-    }
-  },
-  mounted () {
-    this.$modal.EventBus.$on('show', this.onShow)
   }
 }
 </script>
 
 <style module lang="scss">
+  .wrapper {
+    position: fixed;
+    z-index: 120;
+  }
 
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+  }
+
+  .overlay__background {
+    background: rgba(0, 0, 0, 0.6);
+  }
 </style>

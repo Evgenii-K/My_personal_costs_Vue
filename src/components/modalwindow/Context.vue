@@ -1,5 +1,5 @@
 <template>
-  <div :class="$style.wrapper__context">
+  <div :class="$style.wrapper">
     <ul :class="$style.context__menu">
       <li :class="$style.context__item">
         Редактировать
@@ -23,16 +23,16 @@ export default {
   .wrapper__context {
     position: relative;
   }
+
   .context__menu {
     left: -20px;
     margin-top: 16px;
     background: #fff;
-    box-shadow: 0 4px 32px 0 rgba(0, 0, 0, 32%);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     list-style: none;
     padding: 8px 0;
     position: absolute;
     transform-origin: 0 0;
-    z-index: 20;
   }
 
   .context__item {

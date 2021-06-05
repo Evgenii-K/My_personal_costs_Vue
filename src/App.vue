@@ -9,34 +9,50 @@
     </nav>
     <main>
       <router-view />
-      <button @click="showModal('paymentform')">Show form</button>
-      <button @click="showModal('authform')">Show auth</button>
-      <Modal />
+      <Modal
+        v-if="modalShown"
+        :name="modalShown"
+        :setting="modalSetting"
+      />
     </main>
   </div>
 </template>
 
 <script>
-import Modal from './components/modalwindow/Modal'
 
 export default {
   name: 'App',
   data () {
     return {
+      modalShown: '',
+      modalSetting: {}
     }
   },
   components: {
-    Modal
+    Modal: () => import('./components/modalwindow/Modal')
+  },
+  methods: {
+    onShow ({ name, setting }) {
+      this.modalShown = name
+      this.modalSetting = setting
+    },
+    onClose () {
+      this.modalShown = ''
+    },
+    showModal (name, setting) {
+      this.$modal.show(name, setting)
+    }
   },
   mounted () {
     if (this.$route.path === '/' || this.$route.params.value) {
       this.$router.push({ name: 'dashboard' })
     }
+    this.$modal.EventBus.$on('show', this.onShow)
+    this.$modal.EventBus.$on('close', this.onClose)
   },
-  methods: {
-    showModal (name) {
-      this.$modal.show(name)
-    }
+  beforeDestroy () {
+    this.$modal.EventBus.$off('show', this.onShow)
+    this.$modal.EventBus.$off('close', this.onClose)
   }
 }
 </script>

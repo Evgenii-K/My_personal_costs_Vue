@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="$style.wrapper">
     <form v-on:submit.prevent="add">
       <div @click="descriptionEmpty = false">
         <select
@@ -34,7 +34,6 @@
         You need to add a description
       </span>
     </form>
-    <div></div>
   </div>
 </template>
 
@@ -54,16 +53,16 @@ export default {
       options: []
     }
   },
-  watch: {
-    $route (to) {
-      if (to.params.description) {
-        this.itemList.description = to.params.description
-        if (to.query.value) {
-          this.itemList.amount = +to.query.value
-          this.add()
-        }
-        this.$router.push({ name: 'dashboard' })
+  mounted () {
+    if (this.$route.params.description) {
+      this.itemList.description = this.$route.params.description
+      if (this.$route.query.value) {
+        this.itemList.amount = +this.$route.query.value
+        this.add()
+      } else {
+        this.itemList.date = this.getCurrentDate()
       }
+      this.$router.push({ name: 'dashboard' })
     }
   },
   methods: {
@@ -75,7 +74,7 @@ export default {
     ]),
     getCurrentDate () {
       const today = new Date()
-      const d = today.getDate()
+      const d = today.getDate() > 9 ? today.getDate() : `0${today.getDate()}`
       const m = today.getMonth() > 8 ? today.getMonth() + 1 : `0${today.getMonth() + 1}`
       const y = today.getFullYear()
       return `${y}-${m}-${d}`
@@ -114,6 +113,16 @@ export default {
 </script>
 
 <style module lang="scss">
+  .wrapper {
+    border-radius: 10px;
+    background: white;
+    position: fixed;
+    transform: translate(-50%, -50%);
+    max-width: 100%;
+    padding: 20px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  }
+
   .input {
     display: block;
     font-size: 16px;
@@ -154,7 +163,6 @@ export default {
     font-size: 14px;
     font-weight: 500;
     color: whitesmoke;
-    margin-bottom: 10px;
     background-color: rgba(37, 167, 154, 1.0);
     width: 160px;
     height: 36px;
