@@ -3,7 +3,7 @@
     <header :class="$style.header">
       My personal costs
     </header>
-    <nav>
+    <nav :class="$style.nav">
       <router-link :class="$style.link" to="/dashboard">Dashboard</router-link>
       <router-link :class="$style.link" to="/about">About</router-link>
     </nav>
@@ -61,6 +61,13 @@ export default {
   .header {
     font-size: 36px;
     font-weight: 700;
+    padding-bottom: 10px;
+  }
+
+  .nav {
+    background-color: lightgray;
+    padding: 10px;
+    width: 520px;
   }
 
   .link {
@@ -68,10 +75,14 @@ export default {
     font-weight: 700;
     color: black;
     text-decoration: none;
-    margin: 10px;
+    padding: 0 10px;
+
+    &:not(:last-child) {
+      border-right: 2px solid black;
+    }
 
     &:hover {
-      color: lightskyblue;
+      color:lightblue;
     }
   }
 </style>

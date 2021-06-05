@@ -8,7 +8,7 @@
     </header>
     <div :class="$style.paymentList">
       <div v-for="(item, key) in itemsOnPage" :key="key" :class="$style.itemName">
-        <div :class="[$style.item__id, $style.item]">{{ item.id }}</div>
+        <div :class="[$style.item__id, $style.item]">{{ (currentPage - 1) * maxItemOnPage + (key + 1) }}</div>
         <div :class="[$style.item__date, $style.item]">{{ item.date }}</div>
         <div :class="[$style.item__cat, $style.item]">{{ item.category }}</div>
         <div :class="[$style.item__value, $style.item]">{{ item.value }}</div>
@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 import Pagination from './PyamentPagination'
 
 export default {
@@ -37,12 +37,14 @@ export default {
   },
   data () {
     return {
-      currentPage: Number
+      currentPage: Number,
+      maxItemOnPage: 3
     }
   },
   watch: {
     itemsOnPage () {
       if (!this.itemsOnPage) return
+      // если на странице удалён последний элемент и страница не первая то переходим на предыдущую страницу
       if (this.itemsOnPage.length === 0 && this.currentPage > 1) {
         this.currentPage--
       }
@@ -50,6 +52,7 @@ export default {
     '$route.path': function () {
       if (this.$route.params.page) {
         this.currentPage = this.$route.params.page
+        console.log(this.currentPage)
       }
     }
   },
@@ -57,25 +60,24 @@ export default {
     ...mapGetters([
       'getPaymentsListData'
     ]),
+    startPage () {
+      return (this.currentPage - 1) * this.maxItemOnPage
+    },
+    endPage () {
+      return this.currentPage * this.maxItemOnPage
+    },
     itemsOnPage () {
-      const itemsOnPage = this.getPaymentsListData(this.currentPage)
-      this.fetchCurrentPage(this.currentPage)
+      const itemsOnPage = this.getPaymentsListData.slice(this.startPage, this.endPage)
       return itemsOnPage
     }
   },
   methods: {
-    ...mapActions([
-      'fetchCurrentPage'
-    ]),
     showModal (event, name) {
       const setting = { x: 0, y: 0, overlay: false }
       setting.x = (event.clientX - event.layerX) + 'px'
       setting.y = (event.clientY + event.layerY) + 'px'
       this.$modal.show(name, setting)
     }
-  },
-  mounted () {
-    this.currentPage = this.$route.params.page
   }
 }
 </script>

@@ -5,40 +5,29 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    paymentsListData: {
-      page1: [
-        { id: 1, date: '20.03.2020', category: 'Food', value: 169 },
-        { id: 2, date: '21.03.2020', category: 'Navigation', value: 50 },
-        { id: 3, date: '22.03.2020', category: 'Sport', value: 450 }
-      ],
-      page2: [
-        { id: 4, date: '23.03.2020', category: 'Entertaiment', value: 969 },
-        { id: 5, date: '24.03.2020', category: 'Education', value: 1500 },
-        { id: 6, date: '25.03.2020', category: 'Food', value: 200 }
-      ]
-    },
-    paymentsListLength: 2,
-    paymentList: [],
-    newItem: {},
+    paymentsListData: {},
+    paymentsListLength: Number,
+    paymentsList: [],
+    paymentsListIDS: [],
     description: ['Food', 'Shoes', 'Cellular', 'Entertainment', 'Transport']
   },
   mutations: {
-    setNewItem (state, payload) {
-      state.newItem = payload
-    },
     addToPaymentsListData (state, payload) {
-      state.paymentsListData = { ...state.paymentsListData, ...payload.newPage }
+      const newUniqObjs = payload.filter(obj => {
+        return state.paymentsListIDS.indexOf(obj.id) < 0
+      })
+      const uniqIDS = newUniqObjs.map(obj => obj.id)
+      state.paymentsListIDS.push(...uniqIDS)
+      state.paymentsList.push(...newUniqObjs)
+      console.log('state', state.paymentsList)
     },
     setPaymentListLength (state, payload) {
       state.paymentsListLength = payload
     }
   },
   getters: {
-    // Запрос колличства страниц
     getPaymentListLength: state => state.paymentsListLength,
-    getPaymentsListData: state => pageNumber => {
-      return state.paymentsListData[`page${pageNumber}`]
-    },
+    getPaymentsListData: state => state.paymentsList,
     getDescription: state => state.description
   },
   actions: {
@@ -48,24 +37,18 @@ export default new Vuex.Store({
         .then(res => res.json())
         .then(pages => commit('setPaymentsListData', pages))
     },
-    fetchCurrentPage ({ state, dispatch }, page) {
-      const currentPage = `page${page}`
-      if (!state.paymentsListData[currentPage]) {
-        dispatch('fetchFromServe', page)
-      }
-    },
     fetchFromServe ({ commit }, page) {
       fetch(`/database/${page}`)
         .then(res => res.json())
-        .then(list => commit('addToPaymentsListData', { newPage: list }))
+        .then(res => Object.values(res))
+        .then(res => res.flat())
+        .then(list => commit('addToPaymentsListData', list))
     },
     // Запрос колличества страниц с сервера
     fetchPaymentsListLength ({ commit }) {
       fetch('/lengthList')
         .then(res => res.json())
-        .then(length => {
-          commit('setPaymentListLength', length)
-        })
+        .then(length => commit('setPaymentListLength', length))
     },
     async addItem ({ dispatch }, item) {
       await fetch('/addToList', {

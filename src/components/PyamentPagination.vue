@@ -12,7 +12,7 @@
     <router-link
       :class="[$style.link, currentPage === page ? $style.active : '']"
       :to="`/dashboard/${page}`"
-      v-for="page in pages"
+      v-for="page in this.getPaymentListLength"
       :key="'Page' + page"
     >
       {{ page }}
@@ -47,20 +47,17 @@ export default {
       if (to.params.page) {
         this.currentPage = +to.params.page
       }
+      this.fetchFromServe(this.currentPage)
     }
   },
   computed: {
     ...mapGetters([
       'getPaymentListLength'
-    ]),
-    pages () {
-      const num = this.getPaymentListLength
-      return num
-    }
+    ])
   },
   methods: {
     ...mapActions([
-      'fetchPaymentsListLength'
+      'fetchPaymentsListLength', 'fetchFromServe'
     ])
   },
   beforeCreate () {
@@ -68,9 +65,6 @@ export default {
   },
   created () {
     this.fetchPaymentsListLength()
-  },
-  mounted () {
-    this.currentPage = this.$route.params.page
   }
 }
 </script>
@@ -78,7 +72,7 @@ export default {
 <style module lang="scss">
   .wrapper {
     font-family: arial;
-    width: 510px;
+    width: 520px;
     height: 20px;
     font-size: 16px;
     font-weight: 500;
