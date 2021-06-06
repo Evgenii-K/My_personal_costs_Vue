@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Pagination',
@@ -47,24 +47,12 @@ export default {
       if (to.params.page) {
         this.currentPage = +to.params.page
       }
-      this.fetchFromServe(this.currentPage)
     }
   },
   computed: {
     ...mapGetters([
       'getPaymentListLength'
     ])
-  },
-  methods: {
-    ...mapActions([
-      'fetchPaymentsListLength', 'fetchFromServe'
-    ])
-  },
-  beforeCreate () {
-    this.$router.push({ name: 'pagination', params: { page: 1 } })
-  },
-  created () {
-    this.fetchPaymentsListLength()
   }
 }
 </script>

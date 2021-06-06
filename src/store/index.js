@@ -19,7 +19,6 @@ export default new Vuex.Store({
       const uniqIDS = newUniqObjs.map(obj => obj.id)
       state.paymentsListIDS.push(...uniqIDS)
       state.paymentsList.push(...newUniqObjs)
-      console.log('state', state.paymentsList)
     },
     setPaymentListLength (state, payload) {
       state.paymentsListLength = payload
@@ -37,6 +36,7 @@ export default new Vuex.Store({
         .then(res => res.json())
         .then(pages => commit('setPaymentsListData', pages))
     },
+    // Реализация получения данных с cервера в виде массива объектов
     fetchFromServe ({ commit }, page) {
       fetch(`/database/${page}`)
         .then(res => res.json())
@@ -50,6 +50,7 @@ export default new Vuex.Store({
         .then(res => res.json())
         .then(length => commit('setPaymentListLength', length))
     },
+    // Добавление элемента списка
     async addItem ({ dispatch }, item) {
       await fetch('/addToList', {
         method: 'post',

@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import Pagination from './PyamentPagination'
 
 export default {
@@ -38,27 +38,28 @@ export default {
   data () {
     return {
       currentPage: Number,
-      maxItemOnPage: 3
+      maxItemOnPage: 3,
+      length: Array
     }
   },
   watch: {
     itemsOnPage () {
       if (!this.itemsOnPage) return
-      // если на странице удалён последний элемент и страница не первая то переходим на предыдущую страницу
+      // если на последней странице удалён последний элемент и страница не первая то переходим на предыдущую страницу
       if (this.itemsOnPage.length === 0 && this.currentPage > 1) {
         this.currentPage--
       }
     },
-    '$route.path': function () {
-      if (this.$route.params.page) {
-        this.currentPage = this.$route.params.page
-        console.log(this.currentPage)
+    async $route (to) {
+      if (to.params.page) {
+        await this.getDataFromServe(to.params.page)
+        await this.getCurrentPage(to.params.page)
       }
     }
   },
   computed: {
     ...mapGetters([
-      'getPaymentsListData'
+      'getPaymentsListData', 'getPaymentListLength'
     ]),
     startPage () {
       return (this.currentPage - 1) * this.maxItemOnPage
@@ -72,12 +73,26 @@ export default {
     }
   },
   methods: {
+    ...mapActions([
+      'fetchPaymentsListLength', 'fetchFromServe'
+    ]),
     showModal (event, name) {
       const setting = { x: 0, y: 0, overlay: false }
       setting.x = (event.clientX - event.layerX) + 'px'
       setting.y = (event.clientY + event.layerY) + 'px'
       this.$modal.show(name, setting)
+    },
+    getCurrentPage (params) {
+      this.currentPage = +params
+    },
+    getDataFromServe (params) {
+      this.fetchFromServe(params)
+      this.length = this.getPaymentsListData
     }
+  },
+  created () {
+    this.$router.push({ name: 'pagination', params: { page: 1 } })
+    this.fetchPaymentsListLength()
   }
 }
 </script>
