@@ -42,14 +42,6 @@ export default {
     }
   },
   watch: {
-    itemsOnPage () {
-      if (!this.itemsOnPage) return
-      // если на последней странице удалён последний элемент и страница не первая то переходим на предыдущую страницу
-      if (this.itemsOnPage.length === 0 && this.currentPage > 1) {
-        this.currentPage--
-        this.$router.push({ name: 'pagination', params: { page: this.currentPage } })
-      }
-    },
     $route (to) {
       if (to.params.page) {
         this.currentPage = +to.params.page
@@ -59,7 +51,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'getPaymentsListData', 'getPaymentListLength'
+      'getPaymentsListData'
     ]),
     startPage () {
       return (this.currentPage - 1) * this.maxItemOnPage
