@@ -5,7 +5,10 @@
       :style="{left: setting.x, top: setting.y}"
     >
       <PaymentForm v-if="name === 'paymentform'" />
-      <Context v-if="name === 'context'" />
+      <Context
+        v-if="name === 'context'"
+        :item="item"
+      />
     </div>
     <div
       :class="[$style.overlay, setting.overlay != '' ? $style.overlay__background : '']"
@@ -26,7 +29,8 @@ export default {
   },
   props: {
     name: String,
-    setting: Object
+    setting: Object,
+    item: Object
   },
   components: {
     PaymentForm,

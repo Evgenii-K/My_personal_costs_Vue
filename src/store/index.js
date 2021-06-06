@@ -22,6 +22,9 @@ export default new Vuex.Store({
     },
     setPaymentListLength (state, payload) {
       state.paymentsListLength = payload
+    },
+    removeFromState (state, payment) {
+      state.paymentsList = state.paymentsList.filter((item) => item !== payment)
     }
   },
   getters: {

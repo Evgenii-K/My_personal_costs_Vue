@@ -13,6 +13,7 @@
         v-if="modalShown"
         :name="modalShown"
         :setting="modalSetting"
+        :item="modalItem"
       />
     </main>
   </div>
@@ -25,7 +26,8 @@ export default {
   data () {
     return {
       modalShown: '',
-      modalSetting: {}
+      modalSetting: {},
+      modalItem: {}
     }
   },
   components: {
@@ -39,6 +41,9 @@ export default {
     onClose () {
       this.modalShown = ''
     },
+    onContextTransfer ({ item }) {
+      this.modalItem = item
+    },
     showModal (name, setting) {
       this.$modal.show(name, setting)
     }
@@ -49,10 +54,12 @@ export default {
     }
     this.$modal.EventBus.$on('show', this.onShow)
     this.$modal.EventBus.$on('close', this.onClose)
+    this.$modal.EventBus.$on('contextTransfer', this.onContextTransfer)
   },
   beforeDestroy () {
     this.$modal.EventBus.$off('show', this.onShow)
     this.$modal.EventBus.$off('close', this.onClose)
+    this.$modal.EventBus.$off('contextTransfer', this.onContextTransfer)
   }
 }
 </script>

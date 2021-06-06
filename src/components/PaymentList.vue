@@ -15,7 +15,7 @@
         <div :class="[$style.wrapper__context, $style.item]">
           <div
             :class="$style.content"
-            @click="showModal($event, 'context')"
+            @click="showModal($event, 'context', item)"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" class=""><path fill-rule="evenodd" d="M8 11.365a1.817 1.817 0 010 3.632 1.817 1.817 0 010-3.632zm0-5.191a1.826 1.826 0 010 3.65 1.826 1.826 0 010-3.65zm0-5.171a1.81 1.81 0 11-.001 3.617A1.81 1.81 0 018 1.003z"></path></svg>
           </div>
@@ -37,9 +37,8 @@ export default {
   },
   data () {
     return {
-      currentPage: Number,
-      maxItemOnPage: 3,
-      length: Array
+      currentPage: 1,
+      maxItemOnPage: 3
     }
   },
   watch: {
@@ -50,10 +49,10 @@ export default {
         this.currentPage--
       }
     },
-    async $route (to) {
+    $route (to) {
       if (to.params.page) {
-        await this.getDataFromServe(to.params.page)
-        await this.getCurrentPage(to.params.page)
+        this.currentPage = +to.params.page
+        this.fetchFromServe(this.currentPage)
       }
     }
   },
@@ -76,18 +75,13 @@ export default {
     ...mapActions([
       'fetchPaymentsListLength', 'fetchFromServe'
     ]),
-    showModal (event, name) {
+    showModal (event, name, item) {
+      console.log(item)
       const setting = { x: 0, y: 0, overlay: false }
       setting.x = (event.clientX - event.layerX) + 'px'
       setting.y = (event.clientY + event.layerY) + 'px'
       this.$modal.show(name, setting)
-    },
-    getCurrentPage (params) {
-      this.currentPage = +params
-    },
-    getDataFromServe (params) {
-      this.fetchFromServe(params)
-      this.length = this.getPaymentsListData
+      this.$modal.contextTransfer(item)
     }
   },
   created () {

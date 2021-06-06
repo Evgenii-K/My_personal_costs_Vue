@@ -4,8 +4,11 @@
       <li :class="$style.context__item">
         Редактировать
       </li>
-      <li :class="$style.context__item">
-        Удалить
+      <li
+        :class="$style.context__item"
+        @click="remove(item)"
+      >
+        Удалить {{ item.value}}
       </li>
       <span :class="$style.context__menu_arrow" style="left: 20px;"></span>
     </ul>
@@ -13,8 +16,25 @@
 </template>
 
 <script>
-export default {
+import { mapMutations } from 'vuex'
 
+export default {
+  data () {
+    return {
+    }
+  },
+  props: {
+    item: Object
+  },
+  methods: {
+    remove (item) {
+      this.removeFromState(item)
+      this.$modal.close()
+    },
+    ...mapMutations([
+      'removeFromState'
+    ])
+  }
 }
 </script>
 

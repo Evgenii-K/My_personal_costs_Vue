@@ -15,6 +15,10 @@ export default {
 
       close () {
         this.EventBus.$emit('close')
+      },
+
+      contextTransfer (item) {
+        this.EventBus.$emit('contextTransfer', { item })
       }
     }
   }
