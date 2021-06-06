@@ -76,7 +76,6 @@ export default {
       'fetchPaymentsListLength', 'fetchFromServe'
     ]),
     showModal (event, name, item) {
-      console.log(item)
       const setting = { x: 0, y: 0, overlay: false }
       setting.x = (event.clientX - event.layerX) + 'px'
       setting.y = (event.clientY + event.layerY) + 'px'

@@ -1,14 +1,17 @@
 <template>
   <div :class="$style.wrapper">
     <ul :class="$style.context__menu">
-      <li :class="$style.context__item">
+      <li
+        :class="$style.context__item"
+        @click="edit"
+      >
         Редактировать
       </li>
       <li
         :class="$style.context__item"
-        @click="remove(item)"
+        @click="remove"
       >
-        Удалить {{ item.value}}
+        Удалить
       </li>
       <span :class="$style.context__menu_arrow" style="left: 20px;"></span>
     </ul>
@@ -27,9 +30,13 @@ export default {
     item: Object
   },
   methods: {
-    remove (item) {
-      this.removeFromState(item)
+    remove () {
+      this.removeFromState(this.item)
       this.$modal.close()
+    },
+    edit () {
+      const setting = { x: 50 + '%', y: 50 + '%', overlay: true }
+      this.$modal.show('editform', setting)
     },
     ...mapMutations([
       'removeFromState'

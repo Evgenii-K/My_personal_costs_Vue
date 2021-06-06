@@ -2,11 +2,15 @@
   <div class="content">
     <div
       :class="$style.wrapper"
-      :style="{left: setting.x, top: setting.y}"
+      :style="{left: styleLeft, top: styleTop}"
     >
       <PaymentForm v-if="name === 'paymentform'" />
       <Context
         v-if="name === 'context'"
+        :item="item"
+      />
+      <EditForm
+        v-if="name === 'editform'"
         :item="item"
       />
     </div>
@@ -21,6 +25,7 @@
 <script>
 import PaymentForm from '../PaymentForm'
 import Context from './Context'
+import EditForm from './EditForm'
 
 export default {
   data () {
@@ -34,7 +39,24 @@ export default {
   },
   components: {
     PaymentForm,
-    Context
+    Context,
+    EditForm
+  },
+  computed: {
+    styleLeft () {
+      if (this.setting.x) {
+        return this.setting.x
+      } else {
+        return '0px'
+      }
+    },
+    styleTop () {
+      if (this.setting.y) {
+        return this.setting.y
+      } else {
+        return '0px'
+      }
+    }
   }
 }
 </script>
