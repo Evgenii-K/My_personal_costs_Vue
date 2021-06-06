@@ -11,7 +11,12 @@
             {{ option }}
           </option>
         </select>
-        <button :class="$style.btn__add">Add own description</button>
+        <button
+          :class="$style.btn__add"
+          @click="$modal.show('editdescription', { x: 50 + '%', y: 50 + '%', overlay: true })"
+        >
+          Add own description
+        </button>
         <input
           :class="[$style.input__amount, $style.input]"
           type="number"
@@ -27,6 +32,12 @@
         >
       </div>
       <button :class="$style.btn__add">ADD +</button>
+      <button
+        :class="$style.btn__add"
+        @click="$modal.close()"
+      >
+        Cancel
+      </button>
       <span
         :class="$style.span"
         v-if="descriptionEmpty"
@@ -53,7 +64,7 @@ export default {
       options: []
     }
   },
-  mounted () {
+  created () {
     if (this.$route.params.description) {
       this.itemList.description = this.$route.params.description
       if (this.$route.query.value) {
@@ -64,6 +75,7 @@ export default {
       }
       this.$router.push({ name: 'dashboard' })
     }
+    this.options = this.getDescription()
   },
   methods: {
     ...mapActions([
@@ -104,10 +116,9 @@ export default {
       await this.addItem(newItem)
 
       await this.fetchFromServe(this.getPaymentListLength())
+
+      this.$modal.close()
     }
-  },
-  created () {
-    this.options = this.getDescription()
   }
 }
 </script>
@@ -171,6 +182,7 @@ export default {
     box-shadow: 3px 3px rgba(0, 0, 0, 0.1);
     outline: none;
     border-radius: 5px;
+    margin: 0 5px;
 
     &::-moz-focus-inner {
     padding: 0;

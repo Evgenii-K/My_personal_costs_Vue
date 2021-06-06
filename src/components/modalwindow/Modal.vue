@@ -13,6 +13,7 @@
         v-if="name === 'editform'"
         :item="item"
       />
+      <EditDescription v-if="name === 'editdescription'" />
     </div>
     <div
       :class="[$style.overlay, setting.overlay != '' ? $style.overlay__background : '']"
@@ -23,9 +24,10 @@
 </template>
 
 <script>
-import PaymentForm from '../PaymentForm'
+import PaymentForm from './PaymentForm'
 import Context from './Context'
 import EditForm from './EditForm'
+import EditDescription from './EditDescription'
 
 export default {
   data () {
@@ -40,7 +42,8 @@ export default {
   components: {
     PaymentForm,
     Context,
-    EditForm
+    EditForm,
+    EditDescription
   },
   computed: {
     styleLeft () {
