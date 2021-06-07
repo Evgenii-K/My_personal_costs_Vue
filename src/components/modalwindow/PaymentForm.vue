@@ -1,50 +1,53 @@
 <template>
   <div :class="$style.wrapper">
-    <form v-on:submit.prevent="add">
-      <div @click="descriptionEmpty = false">
-        <select
-          :class="[$style.input__description, $style.input]"
-          v-model="itemList.description"
-        >
-          <option value="" disabled selected hidden>Payment description</option>
-          <option v-for="(option, key) in options" :key="key">
-            {{ option }}
-          </option>
-        </select>
-        <button
-          :class="$style.btn__add"
-          @click="$modal.show('editdescription', { x: 50 + '%', y: 50 + '%', overlay: true })"
-        >
-          Add own description
-        </button>
-        <input
-          :class="[$style.input__amount, $style.input]"
-          type="number"
-          step="any"
-          placeholder="Payment amount"
-          v-model="itemList.amount"
-        >
-        <input
-          :class="[$style.input__date, $style.input]"
-          type="date"
-          placeholder="Payment date"
-          v-model="itemList.date"
-        >
-      </div>
-      <button :class="$style.btn__add">ADD +</button>
+    <div @click="descriptionEmpty = false">
+      <select
+        :class="[$style.input__description, $style.input]"
+        v-model="itemList.description"
+      >
+        <option value="" disabled selected hidden>Payment description</option>
+        <option v-for="(option, key) in options" :key="key">
+          {{ option }}
+        </option>
+      </select>
       <button
         :class="$style.btn__add"
-        @click="$modal.close()"
+        @click="$modal.show('editdescription', { x: 50 + '%', y: 50 + '%', overlay: true })"
       >
-        Cancel
+        Add own description
       </button>
-      <span
-        :class="$style.span"
-        v-if="descriptionEmpty"
+      <input
+        :class="[$style.input__amount, $style.input]"
+        type="number"
+        step="any"
+        placeholder="Payment amount"
+        v-model="itemList.amount"
       >
-        You need to add a description
-      </span>
-    </form>
+      <input
+        :class="[$style.input__date, $style.input]"
+        type="date"
+        placeholder="Payment date"
+        v-model="itemList.date"
+      >
+    </div>
+    <button
+      :class="$style.btn__add"
+      @click="add"
+    >
+      ADD +
+    </button>
+    <button
+      :class="$style.btn__add"
+      @click="$modal.close()"
+    >
+      Cancel
+    </button>
+    <span
+      :class="$style.span"
+      v-if="descriptionEmpty"
+    >
+      You need to add a description
+    </span>
   </div>
 </template>
 
@@ -116,8 +119,6 @@ export default {
       await this.addItem(newItem)
 
       await this.fetchFromServe(this.getPaymentListLength())
-
-      this.$modal.close()
     }
   }
 }

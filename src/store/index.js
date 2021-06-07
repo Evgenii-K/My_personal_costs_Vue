@@ -25,6 +25,9 @@ export default new Vuex.Store({
     },
     removeFromState (state, payment) {
       state.paymentsList = state.paymentsList.filter((item) => item !== payment)
+      state.paymentsListIDS = state.paymentsListIDS.filter((item) => item !== payment.id)
+      console.log('id', state.paymentsListIDS)
+      console.log('list', state.paymentsList)
     },
     editPayment (state, payload) {
       state.paymentsList = state.paymentsList.map(item => {

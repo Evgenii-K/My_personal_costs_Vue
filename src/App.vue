@@ -9,12 +9,14 @@
     </nav>
     <main>
       <router-view />
-      <Modal
-        v-if="modalShown"
-        :name="modalShown"
-        :setting="modalSetting"
-        :item="modalItem"
-      />
+      <transition name="fade">
+        <Modal
+          v-if="modalShown"
+          :name="modalShown"
+          :setting="modalSetting"
+          :item="modalItem"
+        />
+      </transition>
     </main>
   </div>
 </template>
@@ -63,6 +65,16 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity .3s ease;
+  }
+
+  .fade-enter, .fade-leave-to {
+    opacity: 0;
+  }
+</style>
 
 <style lang="scss" module>
   .header {
