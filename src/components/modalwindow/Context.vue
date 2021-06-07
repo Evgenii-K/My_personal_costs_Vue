@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapActions } from 'vuex'
 
 export default {
   data () {
@@ -31,15 +31,15 @@ export default {
   },
   methods: {
     remove () {
-      this.removeFromState(this.item)
+      this.removeFromList(this.item)
       this.$modal.close()
     },
     edit () {
       const setting = { x: 50 + '%', y: 50 + '%', overlay: true }
       this.$modal.show('editform', setting)
     },
-    ...mapMutations([
-      'removeFromState'
+    ...mapActions([
+      'removeFromList'
     ])
   }
 }

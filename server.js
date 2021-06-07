@@ -12,35 +12,66 @@ app.use(express.static(root))
 app.use(bodyParser.json())
 // app.use(history())
 
-app.get('/database/:page', (req, res) => {
+// Колличество элементов на странице
+const itemsOnPage = 5
+
+app.get('/getList/:page', (req, res) => {
   const page = req.params.page
-  fs.readFile('./dist/database/paymentList.json', 'utf8', (err, data) => {
+  const filePath = './dist/database/paymentListCopy.json'
+
+  fs.readFile(filePath, 'utf8', (err, data) => {
     if (err) {
-      console.log(`Oops: ${err}`)
+      console.log(`Read file err: ${err}`)
     }
+
     data = JSON.parse(data)
+    data = Object.entries(data)
+    data = data.flat()[1]
     data = Object.fromEntries(
-      Object.entries(data).slice((page - 1), page)
+      getPages(data).slice((page - 1), page)
     )
     res.send(JSON.stringify(data))
   })
 })
 
-app.get('/lengthList', (req, res) => {
-  fs.readFile('./dist/database/paymentList.json', 'utf8', (err, data) => {
+function getPages (data) {
+  // Создаём первую пустую страницу
+  const dataWithPages = [['Page1', []]]
+  // Определяем количество элементов на последней странице
+  let lastPageLength = 0
+
+  for (const item of data) {
+    // Если последняя страница не заполнена заполняем её, иначе заполняем новую
+    if (lastPageLength < itemsOnPage) {
+      dataWithPages[dataWithPages.length - 1][1].push(item)
+    } else {
+      const newPage = [`page${dataWithPages.length + 1}`, [item]]
+      dataWithPages.push(newPage)
+    }
+
+    lastPageLength = dataWithPages[dataWithPages.length - 1][1].length
+  }
+
+  return dataWithPages
+}
+
+app.get('/getLength', (req, res) => {
+  fs.readFile('./dist/database/paymentListCopy.json', 'utf8', (err, data) => {
     if (err) {
       console.log(`Get length err: ${err}`)
     }
     data = JSON.parse(data)
-    data = Object.entries(data).length
+    data = Object.entries(data)
+    data = data.flat()[1].length
+    data = Math.ceil(data / itemsOnPage)
     data = JSON.stringify(data)
     res.send(data)
   })
 })
 
 // Добавленеие элемента списка
-app.post('/addToList', (req, res) => {
-  const filePath = './dist/database/paymentList.json'
+app.post('/addItem', (req, res) => {
+  const filePath = './dist/database/paymentListCopy.json'
   let item = req.body
 
   fs.readFile(filePath, 'utf8', (err, data) => {
@@ -51,25 +82,78 @@ app.post('/addToList', (req, res) => {
     data = JSON.parse(data)
     data = Object.entries(data)
 
-    // Определяем количество элементов на последней странице
-    const lastPageLength = data[data.length - 1][1].length
+    // Определяем количество элементов
+    const pagesLength = data.flat()[1].length
 
-    // Определяем id последнего элемента списка и добавляем следующий id к новому элементу
-    const lastId = data[data.length - 1][1][lastPageLength - 1].id
-    const newId = ['id', lastId + 1]
+    // Определяем id последнего элемента списка
+    const lastId = data.flat()[1][pagesLength - 1].id
 
     // Добавляем id к новому элементу списка
-    item = Object.entries(item)
-    item.unshift(newId)
-    item = Object.fromEntries(item)
+    item = { ...item, ...{ id: lastId + 1 } }
 
-    // Если последняя страница не заполнена заполняем её, иначе заполняем новую
-    if (lastPageLength < 3) {
-      data[data.length - 1][1].push(item)
-    } else {
-      const newPage = [`page${data.length + 1}`, [item]]
-      data.push(newPage)
+    console.log('item', item)
+
+    data.flat()[1].push(item)
+
+    data = Object.fromEntries(data)
+
+    fs.writeFile(filePath, JSON.stringify(data), (err) => {
+      if (err) {
+        console.log(`Error write: ${err}`)
+      }
+      res.send(data)
+    })
+  })
+})
+
+// Удаление элемента из списка
+app.post('/removeItem', (req, res) => {
+  const filePath = './dist/database/paymentListCopy.json'
+  const item = req.body
+
+  fs.readFile(filePath, 'utf8', (err, data) => {
+    if (err) {
+      console.log(`Read file err: ${err}`)
     }
+
+    data = JSON.parse(data)
+    data = Object.entries(data)
+
+    data = data.map(([key, value]) => [key, value.filter((el) => el.id !== item.id)])
+
+    data = Object.fromEntries(data)
+
+    fs.writeFile(filePath, JSON.stringify(data), (err) => {
+      if (err) {
+        console.log(`Error write: ${err}`)
+      }
+      res.send(data)
+    })
+  })
+})
+
+// Редактирование элемента массива
+app.post('/editItem', (req, res) => {
+  const filePath = './dist/database/paymentListCopy.json'
+  const item = req.body
+
+  fs.readFile(filePath, 'utf8', (err, data) => {
+    if (err) {
+      console.log(`Read file err: ${err}`)
+    }
+
+    data = JSON.parse(data)
+    data = Object.entries(data)
+
+    data = data.map(([key, value]) => [key, value.map(el => {
+      if (el.id === item.id) {
+        el = { ...el, ...item }
+        return el
+      } else {
+        return el
+      }
+    })
+    ])
 
     data = Object.fromEntries(data)
 

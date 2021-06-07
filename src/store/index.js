@@ -9,7 +9,9 @@ export default new Vuex.Store({
     paymentsListLength: Number,
     paymentsList: [],
     paymentsListIDS: [],
-    description: ['Food', 'Shoes', 'Cellular', 'Entertainment', 'Transport']
+    description: ['Food', 'Shoes', 'Cellular', 'Entertainment', 'Transport'],
+    paymentsListNew: [],
+    paymentsListLengthNew: Number
   },
   mutations: {
     addToPaymentsListData (state, payload) {
@@ -26,8 +28,6 @@ export default new Vuex.Store({
     removeFromState (state, payment) {
       state.paymentsList = state.paymentsList.filter((item) => item !== payment)
       state.paymentsListIDS = state.paymentsListIDS.filter((item) => item !== payment.id)
-      console.log('id', state.paymentsListIDS)
-      console.log('list', state.paymentsList)
     },
     editPayment (state, payload) {
       state.paymentsList = state.paymentsList.map(item => {
@@ -57,7 +57,7 @@ export default new Vuex.Store({
     },
     // Реализация получения данных с cервера в виде массива объектов
     fetchFromServe ({ commit }, page) {
-      fetch(`/database/${page}`)
+      fetch(`/getList/${page}`)
         .then(res => res.json())
         .then(res => Object.values(res))
         .then(res => res.flat())
@@ -65,13 +65,13 @@ export default new Vuex.Store({
     },
     // Запрос колличества страниц с сервера
     fetchPaymentsListLength ({ commit }) {
-      fetch('/lengthList')
+      fetch('/getLength')
         .then(res => res.json())
         .then(length => commit('setPaymentListLength', length))
     },
     // Добавление элемента списка
     async addItem ({ dispatch }, item) {
-      await fetch('/addToList', {
+      await fetch('/addItem', {
         method: 'post',
         body: JSON.stringify(item),
         headers: {
@@ -79,6 +79,27 @@ export default new Vuex.Store({
         }
       })
       await dispatch('fetchPaymentsListLength')
+    },
+    async removeFromList ({ commit, dispatch }, item) {
+      await fetch('/removeItem', {
+        method: 'post',
+        body: JSON.stringify(item),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      await dispatch('fetchPaymentsListLength')
+      commit('removeFromState', item)
+    },
+    editItem ({ commit }, item) {
+      fetch('/editItem', {
+        method: 'post',
+        body: JSON.stringify(item),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      commit('editPayment', item)
     }
   }
 })

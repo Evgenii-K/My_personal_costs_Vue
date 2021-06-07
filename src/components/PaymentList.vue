@@ -38,7 +38,7 @@ export default {
   data () {
     return {
       currentPage: 1,
-      maxItemOnPage: 3
+      maxItemOnPage: 5
     }
   },
   watch: {
