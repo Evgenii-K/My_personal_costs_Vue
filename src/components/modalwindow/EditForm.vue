@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'EditForm',
@@ -66,8 +66,8 @@ export default {
     this.itemList.date = this.item.date.split('.').reverse().join('-')
   },
   methods: {
-    ...mapMutations([
-      'editPayment'
+    ...mapActions([
+      'editItem'
     ]),
     getCurrentDate () {
       const today = new Date()
@@ -99,7 +99,7 @@ export default {
         value: this.itemList.amount
       }
 
-      this.editPayment(newItem)
+      this.editItem(newItem)
 
       this.$modal.close()
     }
