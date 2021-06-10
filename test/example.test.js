@@ -1,5 +1,6 @@
+import 'regenerator-runtime/runtime'
 import { mount } from '@vue/test-utils'
-import TestComponent from './TestComponent'
+import TestComponent from '../src/TestComponent'
 
 describe('TestComponent', () => {
   test('Content of the TestComponent', () => {

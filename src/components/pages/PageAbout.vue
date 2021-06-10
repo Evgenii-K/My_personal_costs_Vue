@@ -1,7 +1,7 @@
 <template>
   <div>
     <header>
-      About
+      <h1>This is an about page</h1>
     </header>
   </div>
 </template>
