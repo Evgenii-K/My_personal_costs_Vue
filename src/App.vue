@@ -54,6 +54,7 @@ export default {
     if (this.$route.path === '/' || this.$route.params.value) {
       this.$router.push({ name: 'dashboard' })
     }
+
     this.$modal.EventBus.$on('show', this.onShow)
     this.$modal.EventBus.$on('close', this.onClose)
     this.$modal.EventBus.$on('contextTransfer', this.onContextTransfer)

@@ -8,14 +8,15 @@
     </header>
     <div :class="$style.paymentList">
       <div v-for="(item, key) in itemsOnPage" :key="key" :class="$style.itemName">
-        <div :class="[$style.item__id, $style.item]">{{ (currentPage - 1) * maxItemOnPage + (key + 1) }}</div>
-        <div :class="[$style.item__date, $style.item]">{{ item.date }}</div>
-        <div :class="[$style.item__cat, $style.item]">{{ item.category }}</div>
-        <div :class="[$style.item__value, $style.item]">{{ item.value }}</div>
+        <div name="page" :class="[$style.item__id, $style.item]">{{ (currentPage - 1) * maxItemOnPage + (key + 1) }}</div>
+        <div name="date" :class="[$style.item__date, $style.item]">{{ item.date }}</div>
+        <div name="category" :class="[$style.item__cat, $style.item]">{{ item.category }}</div>
+        <div name="value" :class="[$style.item__value, $style.item]">{{ item.value }}</div>
         <div :class="[$style.wrapper__context, $style.item]">
           <div
             :class="$style.content"
             @click="showModal($event, 'context', item)"
+            name="btn__context"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" class=""><path fill-rule="evenodd" d="M8 11.365a1.817 1.817 0 010 3.632 1.817 1.817 0 010-3.632zm0-5.191a1.826 1.826 0 010 3.65 1.826 1.826 0 010-3.65zm0-5.171a1.81 1.81 0 11-.001 3.617A1.81 1.81 0 018 1.003z"></path></svg>
           </div>

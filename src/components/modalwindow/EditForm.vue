@@ -61,9 +61,15 @@ export default {
     item: Object
   },
   mounted () {
-    this.itemList.description = this.item.category
-    this.itemList.amount = this.item.value
-    this.itemList.date = this.item.date.split('.').reverse().join('-')
+    if (this.item.category) {
+      this.itemList.description = this.item.category
+    }
+    if (this.item.value) {
+      this.itemList.amount = this.item.value
+    }
+    if (this.item.date) {
+      this.itemList.date = this.item.date.split('.').reverse().join('-')
+    }
   },
   methods: {
     ...mapActions([
