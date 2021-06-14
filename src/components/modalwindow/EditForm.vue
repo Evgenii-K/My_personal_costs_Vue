@@ -22,6 +22,7 @@
       >
     </div>
     <button
+      name="btn__add"
       :class="$style.btn__add"
       @click="add"
     >

@@ -8,7 +8,7 @@
     </header>
     <div :class="$style.paymentList">
       <div v-for="(item, key) in itemsOnPage" :key="key" :class="$style.itemName">
-        <div name="page" :class="[$style.item__id, $style.item]">{{ (currentPage - 1) * maxItemOnPage + (key + 1) }}</div>
+        <div name="id" :class="[$style.item__id, $style.item]">{{ (currentPage - 1) * maxItemOnPage + (key + 1) }}</div>
         <div name="date" :class="[$style.item__date, $style.item]">{{ item.date }}</div>
         <div name="category" :class="[$style.item__cat, $style.item]">{{ item.category }}</div>
         <div name="value" :class="[$style.item__value, $style.item]">{{ item.value }}</div>

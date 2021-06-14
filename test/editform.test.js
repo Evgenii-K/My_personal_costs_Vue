@@ -2,25 +2,50 @@ import 'regenerator-runtime/runtime'
 import { mount, createLocalVue } from '@vue/test-utils'
 import EditForm from '../src/components/modalwindow/EditForm'
 import Modal from '../src/plugins/ModalWindow/index'
+import Vuex from 'vuex'
 
 const localVue = createLocalVue()
 localVue.use(Modal)
-
-// mount(Modal, {
-//   localVue
-// })
+localVue.use(Vuex)
 
 describe('EditForm', () => {
-  test('Content of the TestComponent', () => {
-    const wrapper = mount(EditForm, {
+
+  let actions
+  let store
+  let props
+
+  beforeEach(() => {
+    props = {
       propsData: {
         item: { category: 'Food', value: 500, date: '11.06.2021' }
       }
+    }
+
+    actions = {
+      editItem: jest.fn()
+    }
+
+    store = new Vuex.Store({
+      actions
     })
+  })
 
+  test('Formted date', () => {
+    const wrapper = mount(EditForm, props)
 
-    // expect(wrapperApp.vm.modalShown).toEqual('context')
+    expect(wrapper.vm.itemList.date).toBe('2021-06-11')
+  })
 
-    console.log(wrapper.vm.itemList.description)
+  test('Call vuex', () => {
+    const wrapper = mount(EditForm, props)
+
+    const buttonAdd = wrapper.find('[name="btn__add"]')
+
+    expect(buttonAdd.exists()).toBe(true)
+    expect(buttonAdd.text()).toContain('Apply changes')
+    // buttonAdd.trigger('click')
+
+    // expect(actions.editItem).toBeCalled()
   })
 })
+
