@@ -1,13 +1,10 @@
 <template>
-  <div id="app">
-    <header :class="$style.header">
-      My personal costs
-    </header>
-    <nav :class="$style.nav">
-      <router-link :class="$style.link" to="/dashboard">Dashboard</router-link>
-      <router-link :class="$style.link" to="/about">About</router-link>
-    </nav>
-    <main>
+  <v-app>
+    <v-app-bar app>
+      <v-btn plain to="/dashboard">Dashboard</v-btn>
+      <v-btn plain to="/about">About</v-btn>
+    </v-app-bar>
+    <v-main>
       <router-view />
       <transition name="fade">
         <Modal
@@ -17,8 +14,8 @@
           :item="modalItem"
         />
       </transition>
-    </main>
-  </div>
+    </v-main>
+  </v-app>
 </template>
 
 <script>
@@ -73,35 +70,5 @@ export default {
 
   .fade-enter, .fade-leave-to {
     opacity: 0;
-  }
-</style>
-
-<style lang="scss" module>
-  .header {
-    font-size: 36px;
-    font-weight: 700;
-    padding-bottom: 10px;
-  }
-
-  .nav {
-    background-color: lightgray;
-    padding: 10px;
-    width: 520px;
-  }
-
-  .link {
-    font-size: 18px;
-    font-weight: 700;
-    color: black;
-    text-decoration: none;
-    padding: 0 10px;
-
-    &:not(:last-child) {
-      border-right: 2px solid black;
-    }
-
-    &:hover {
-      color:lightblue;
-    }
   }
 </style>

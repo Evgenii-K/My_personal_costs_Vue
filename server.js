@@ -91,8 +91,6 @@ app.post('/addItem', (req, res) => {
     // Добавляем id к новому элементу списка
     item = { ...item, ...{ id: lastId + 1 } }
 
-    console.log('item', item)
-
     data.flat()[1].push(item)
 
     data = Object.fromEntries(data)
