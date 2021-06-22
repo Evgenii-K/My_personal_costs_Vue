@@ -12,11 +12,9 @@ app.use(express.static(root))
 app.use(bodyParser.json())
 // app.use(history())
 
-// Колличество элементов на странице
-const itemsOnPage = 5
-
-app.get('/getList/:page', (req, res) => {
-  const page = req.params.page
+// Получение эментов страницы с сортировкой
+app.get('/getList', (req, res) => {
+  const { sortBy, sortDesc, page, itemsPerPage } = req.query
   const filePath = './dist/database/paymentListCopy.json'
 
   fs.readFile(filePath, 'utf8', (err, data) => {
@@ -27,34 +25,33 @@ app.get('/getList/:page', (req, res) => {
     data = JSON.parse(data)
     data = Object.entries(data)
     data = data.flat()[1]
-    data = Object.fromEntries(
-      getPages(data).slice((page - 1), page)
-    )
+
+    if (sortBy.length > 0 && sortDesc.length > 0) {
+      data = data.sort((a, b) => {
+        const sortA = a[sortBy]
+        const sortB = b[sortBy]
+
+        if (sortDesc === 'true') {
+          if (sortA < sortB) return 1
+          if (sortA > sortB) return -1
+          return 0
+        } else {
+          if (sortA < sortB) return -1
+          if (sortA > sortB) return 1
+          return 0
+        }
+      })
+    }
+
+    if (itemsPerPage > 0) {
+      data = data.slice((page - 1) * itemsPerPage, page * itemsPerPage)
+    }
+
     res.send(JSON.stringify(data))
   })
 })
 
-function getPages (data) {
-  // Создаём первую пустую страницу
-  const dataWithPages = [['Page1', []]]
-  // Определяем количество элементов на последней странице
-  let lastPageLength = 0
-
-  for (const item of data) {
-    // Если последняя страница не заполнена заполняем её, иначе заполняем новую
-    if (lastPageLength < itemsOnPage) {
-      dataWithPages[dataWithPages.length - 1][1].push(item)
-    } else {
-      const newPage = [`page${dataWithPages.length + 1}`, [item]]
-      dataWithPages.push(newPage)
-    }
-
-    lastPageLength = dataWithPages[dataWithPages.length - 1][1].length
-  }
-
-  return dataWithPages
-}
-
+// Получение длины списка
 app.get('/getLength', (req, res) => {
   fs.readFile('./dist/database/paymentListCopy.json', 'utf8', (err, data) => {
     if (err) {
@@ -63,7 +60,6 @@ app.get('/getLength', (req, res) => {
     data = JSON.parse(data)
     data = Object.entries(data)
     data = data.flat()[1].length
-    data = Math.ceil(data / itemsOnPage)
     data = JSON.stringify(data)
     res.send(data)
   })
@@ -130,7 +126,7 @@ app.post('/removeItem', (req, res) => {
   })
 })
 
-// Редактирование элемента массива
+// Редактирование элемента списка
 app.post('/editItem', (req, res) => {
   const filePath = './dist/database/paymentListCopy.json'
   const item = req.body

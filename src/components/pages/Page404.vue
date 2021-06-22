@@ -1,9 +1,9 @@
 <template>
-  <div>
-    <header>
-      Page 404
-    </header>
-  </div>
+  <v-container
+    fluid
+  >
+    <div class="text-h5 text-sm-h3 pb-4">Page 404</div>
+  </v-container>
 </template>
 
 <script>
@@ -13,8 +13,4 @@ export default {
 </script>
 
 <style modul leng="scss">
-  .header {
-    font-size: 36px;
-    font-weight: 700;
-  }
 </style>

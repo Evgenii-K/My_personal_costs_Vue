@@ -5,30 +5,22 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    paymentsListData: {},
     paymentsListLength: Number,
     paymentsList: [],
-    paymentsListIDS: [],
-    description: ['Food', 'Shoes', 'Cellular', 'Entertainment', 'Transport'],
-    paymentsListNew: [],
-    paymentsListLengthNew: Number
+    description: ['Food', 'Shoes', 'Cellular', 'Entertainment', 'Transport']
   },
   mutations: {
-    addToPaymentsListData (state, payload) {
-      const newUniqObjs = payload.filter(obj => {
-        return state.paymentsListIDS.indexOf(obj.id) < 0
-      })
-      const uniqIDS = newUniqObjs.map(obj => obj.id)
-      state.paymentsListIDS.push(...uniqIDS)
-      state.paymentsList.push(...newUniqObjs)
+    setPaymentsList (state, payload) {
+      state.paymentsList = payload
     },
-    setPaymentListLength (state, payload) {
+    setPaymentsListLength (state, payload) {
       state.paymentsListLength = payload
     },
+    // Удаление элемнета списка
     removeFromState (state, payment) {
       state.paymentsList = state.paymentsList.filter((item) => item !== payment)
-      state.paymentsListIDS = state.paymentsListIDS.filter((item) => item !== payment.id)
     },
+    // Изменение элемента списка
     editPayment (state, payload) {
       state.paymentsList = state.paymentsList.map(item => {
         if (item.id === payload.id) {
@@ -39,35 +31,31 @@ export default new Vuex.Store({
         }
       })
     },
+    // Добавление собственной категории
     editDescription (state, payload) {
       state.description.push(payload)
     }
   },
   getters: {
-    getPaymentListLength: state => state.paymentsListLength,
+    getPaymentsListLength: state => state.paymentsListLength,
     getPaymentsListData: state => state.paymentsList,
     getDescription: state => state.description
   },
   actions: {
-    // Реализация получения данных с github в виде массива объектов
-    fetchFromGithub ({ commit }) {
-      fetch('https://raw.githubusercontent.com/Evgenii-K/My_personal_costs_Vue/Lesson_4/public/database/paymentList.json')
-        .then(res => res.json())
-        .then(pages => commit('setPaymentsListData', pages))
-    },
     // Реализация получения данных с cервера в виде массива объектов
-    fetchFromServe ({ commit }, page) {
-      fetch(`/getList/${page}`)
+    fetchFromServe ({ commit }, options) {
+      const { sortBy, sortDesc, page, itemsPerPage } = options
+      fetch(`/getList?page=${page}&sortBy=${sortBy}&sortDesc=${sortDesc}&itemsPerPage=${itemsPerPage}`)
         .then(res => res.json())
         .then(res => Object.values(res))
         .then(res => res.flat())
-        .then(list => commit('addToPaymentsListData', list))
+        .then(list => commit('setPaymentsList', list))
     },
-    // Запрос колличества страниц с сервера
+    // Запрос колличества элементов
     fetchPaymentsListLength ({ commit }) {
       fetch('/getLength')
         .then(res => res.json())
-        .then(length => commit('setPaymentListLength', length))
+        .then(length => commit('setPaymentsListLength', length))
     },
     // Добавление элемента списка
     async addItem ({ dispatch }, item) {
@@ -80,6 +68,7 @@ export default new Vuex.Store({
       })
       await dispatch('fetchPaymentsListLength')
     },
+    // Удаление элемнета списка
     async removeFromList ({ commit, dispatch }, item) {
       await fetch('/removeItem', {
         method: 'post',
@@ -91,6 +80,7 @@ export default new Vuex.Store({
       await dispatch('fetchPaymentsListLength')
       commit('removeFromState', item)
     },
+    // Изменение элемента списка
     editItem ({ commit }, item) {
       fetch('/editItem', {
         method: 'post',

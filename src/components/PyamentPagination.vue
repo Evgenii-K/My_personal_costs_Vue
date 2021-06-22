@@ -1,5 +1,5 @@
 <template>
-  <div :class="$style.wrapper">
+  <div>
     <router-link
       :class="$style.link"
       :to="{ name: 'pagination', params: { page: currentPage > 1 ? currentPage - 1 : 1}}"
@@ -51,7 +51,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'getPaymentListLength'
+      'getPaymentsListLength'
     ])
   }
 }

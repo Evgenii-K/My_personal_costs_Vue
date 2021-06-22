@@ -1,140 +1,92 @@
 <template>
-  <div>
-    <header :class="$style.header">
-      <div :class="[$style.item__id, $style.item__header]">&#35;</div>
-      <div :class="[$style.item__date, $style.item__header]">Date</div>
-      <div :class="[$style.item__cat, $style.item__header]">Category</div>
-      <div :class="[$style.item__value, $style.item__header]">Value</div>
-    </header>
-    <div :class="$style.paymentList">
-      <div v-for="(item, key) in itemsOnPage" :key="key" :class="$style.itemName">
-        <div :class="[$style.item__id, $style.item]">{{ (currentPage - 1) * maxItemOnPage + (key + 1) }}</div>
-        <div :class="[$style.item__date, $style.item]">{{ item.date }}</div>
-        <div :class="[$style.item__cat, $style.item]">{{ item.category }}</div>
-        <div :class="[$style.item__value, $style.item]">{{ item.value }}</div>
-        <div :class="[$style.wrapper__context, $style.item]">
-          <div
-            :class="$style.content"
-            @click="showModal($event, 'context', item)"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" class=""><path fill-rule="evenodd" d="M8 11.365a1.817 1.817 0 010 3.632 1.817 1.817 0 010-3.632zm0-5.191a1.826 1.826 0 010 3.65 1.826 1.826 0 010-3.65zm0-5.171a1.81 1.81 0 11-.001 3.617A1.81 1.81 0 018 1.003z"></path></svg>
-          </div>
-        </div>
-      </div>
-    </div>
-    <Pagination />
-  </div>
+  <v-data-table
+    :headers="headers"
+    :items="items"
+    :options.sync="options"
+    :server-items-length="getPaymentsListLength"
+    :loading="loading"
+    class="elevation-1"
+  >
+    <template v-slot:item.actions="{ item }">
+      <v-icon
+        small
+        class="mr-2"
+        @click="showModal($event, item)"
+      >
+        mdi-dots-vertical
+      </v-icon>
+    </template>
+  </v-data-table>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import Pagination from './PyamentPagination'
 
 export default {
   name: 'PaymentList',
-  components: {
-    Pagination
-  },
   data () {
     return {
-      currentPage: 1,
-      maxItemOnPage: 5
+      headers: [
+        { text: '#', value: 'id', width: '30px' },
+        { text: 'Date', value: 'date', width: '100px' },
+        { text: 'Category', value: 'category', width: '400px' },
+        { text: 'Value', value: 'value', width: '100px' },
+        { text: '', value: 'actions', sortable: false, width: '30px' }
+      ],
+      loading: true,
+      options: {}
     }
   },
   watch: {
-    $route (to) {
-      if (to.params.page) {
-        this.currentPage = +to.params.page
-        this.fetchFromServe(this.currentPage)
+    options: {
+      handler () {
+        this.getDataFromApi()
+      },
+      deep: true
+    },
+    // При удалении всех элементов на странице переходим на страницу назад
+    items () {
+      if (!this.items.length && this.options.page > 1) {
+        this.options.page = this.options.page - 1
       }
     }
   },
   computed: {
     ...mapGetters([
-      'getPaymentsListData'
+      'getPaymentsListData', 'getPaymentsListLength'
     ]),
-    startPage () {
-      return (this.currentPage - 1) * this.maxItemOnPage
-    },
-    endPage () {
-      return this.currentPage * this.maxItemOnPage
-    },
-    itemsOnPage () {
-      const itemsOnPage = this.getPaymentsListData.slice(this.startPage, this.endPage)
-      return itemsOnPage
+    items () {
+      return this.getPaymentsListData.map((item, id) => {
+        const { page, itemsPerPage } = this.options
+        item.id = (id + 1) + (itemsPerPage * (page - 1))
+        return item
+      })
     }
   },
   methods: {
     ...mapActions([
       'fetchPaymentsListLength', 'fetchFromServe'
     ]),
-    showModal (event, name, item) {
+    showModal (event, item) {
+      const location = event.target.getBoundingClientRect()
       const setting = { x: 0, y: 0, overlay: false }
-      setting.x = (event.clientX - event.layerX) + 'px'
-      setting.y = (event.clientY + event.layerY) + 'px'
-      this.$modal.show(name, setting)
+      setting.x = Math.round(location.x) + 'px'
+      setting.y = Math.round(location.y + location.height / 2) + 'px'
+      this.$modal.show('context', setting)
       this.$modal.contextTransfer(item)
+    },
+    getDataFromApi () {
+      this.loading = true
+      this.fetchFromServe(this.options).then(() => {
+        this.loading = false
+      })
     }
   },
   created () {
-    if (!this.$route.params.page) {
-      this.$router.push({ name: 'pagination', params: { page: 1 } })
-    }
     this.fetchPaymentsListLength()
   }
 }
 </script>
 
 <style module lang="scss">
-  .header {
-    display: flex;
-  }
-
-  .paymentList {
-    width: 550px;
-  }
-
-  .itemName {
-    display: flex;
-  }
-
-  .item {
-    font-size: 18px;
-    font-weight: 500;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    border-top: 1px solid lightgray;
-
-    &__id {
-      min-width: 30px;
-    }
-
-    &__date {
-      min-width: 150px;
-    }
-
-    &__cat {
-      min-width: 250px;
-    }
-
-    &__value {
-      min-width: 100px;
-    }
-
-    &__header {
-      font-size: 16px;
-      font-weight: 900;
-      padding-top: 5px;
-      padding-bottom: 5px;
-    }
-  }
-
-  .wrapper__context {
-    position: relative;
-  }
-
-  .content > svg {
-    vertical-align: text-bottom;
-    cursor: pointer;
-  }
 </style>

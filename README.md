@@ -15,6 +15,11 @@ npm run serve
 npm run build
 ```
 
+### Start and hot-reloads server on express
+```
+npm run dev
+```
+
 ### Lints and fixes files
 ```
 npm run lint
