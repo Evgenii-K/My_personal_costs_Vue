@@ -8,13 +8,24 @@
     class="elevation-1"
   >
     <template v-slot:item.actions="{ item }">
-      <v-icon
-        small
-        class="mr-2"
-        @click="showModal($event, item)"
+      <v-menu
+        bottom
+        offset-y
       >
-        mdi-dots-vertical
-      </v-icon>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            icon
+            v-bind="attrs"
+            v-on="on"
+          >
+            <v-icon>mdi-dots-vertical</v-icon>
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item @click="editItem(item)"><v-list-item-title><v-icon>mdi-pencil</v-icon>Edit</v-list-item-title></v-list-item>
+          <v-list-item @click="deleteItem(item)"><v-list-item-title><v-icon>mdi-basket</v-icon>Delete</v-list-item-title></v-list-item>
+        </v-list>
+      </v-menu>
     </template>
   </v-data-table>
 </template>
@@ -27,7 +38,7 @@ export default {
   data () {
     return {
       headers: [
-        { text: '#', value: 'id', width: '30px' },
+        { text: '#', value: 'index', width: '30px' },
         { text: 'Date', value: 'date', width: '100px' },
         { text: 'Category', value: 'category', width: '400px' },
         { text: 'Value', value: 'value', width: '100px' },
@@ -56,24 +67,25 @@ export default {
       'getPaymentsListData', 'getPaymentsListLength'
     ]),
     items () {
-      return this.getPaymentsListData.map((item, id) => {
+      return this.getPaymentsListData.map((item, i) => {
         const { page, itemsPerPage } = this.options
-        item.id = (id + 1) + (itemsPerPage * (page - 1))
+        item.index = (i + 1) + (itemsPerPage * (page - 1))
         return item
       })
     }
   },
   methods: {
     ...mapActions([
-      'fetchPaymentsListLength', 'fetchFromServe'
+      'fetchPaymentsListLength', 'fetchFromServe', 'removeFromList'
     ]),
-    showModal (event, item) {
-      const location = event.target.getBoundingClientRect()
-      const setting = { x: 0, y: 0, overlay: false }
-      setting.x = Math.round(location.x) + 'px'
-      setting.y = Math.round(location.y + location.height / 2) + 'px'
-      this.$modal.show('context', setting)
+    editItem (item) {
+      const setting = { x: 50 + '%', y: 50 + '%', overlay: true }
+      this.$modal.show('editform', setting)
       this.$modal.contextTransfer(item)
+    },
+    async deleteItem (item) {
+      await this.removeFromList(item)
+      await this.getDataFromApi()
     },
     getDataFromApi () {
       this.loading = true

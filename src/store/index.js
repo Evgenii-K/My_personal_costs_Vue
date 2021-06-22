@@ -16,10 +16,6 @@ export default new Vuex.Store({
     setPaymentsListLength (state, payload) {
       state.paymentsListLength = payload
     },
-    // Удаление элемнета списка
-    removeFromState (state, payment) {
-      state.paymentsList = state.paymentsList.filter((item) => item !== payment)
-    },
     // Изменение элемента списка
     editPayment (state, payload) {
       state.paymentsList = state.paymentsList.map(item => {
@@ -78,7 +74,6 @@ export default new Vuex.Store({
         }
       })
       await dispatch('fetchPaymentsListLength')
-      commit('removeFromState', item)
     },
     // Изменение элемента списка
     editItem ({ commit }, item) {
