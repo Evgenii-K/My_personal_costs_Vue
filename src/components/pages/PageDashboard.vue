@@ -27,11 +27,21 @@
               :key="key"
               :to="`/add/payment/${key}?value=${value}`"
               class="my-2 mr-2"
+              @click="editForm = true"
             >
               {{ key }}
             </v-btn>
           </v-col>
         </v-row>
+        <v-dialog
+          v-model="editForm"
+          max-width="290"
+          v-if="editForm"
+        >
+          <EditForm
+            @close="editForm = false"
+          />
+        </v-dialog>
         <PaymentList />
       </v-col>
       <v-col>
@@ -43,10 +53,12 @@
 
 <script>
 import PaymentList from '../PaymentList'
+import EditForm from '../modalwindow/EditForm.vue'
 
 export default {
   components: {
-    PaymentList
+    PaymentList,
+    EditForm
   },
   data () {
     return {
@@ -55,14 +67,8 @@ export default {
         Food: 200,
         Transport: 50,
         Entertainment: ''
-      }
-    }
-  },
-  watch: {
-    $route (to) {
-      if (to.params.description) {
-        this.$modal.show('paymentform', { x: 50 + '%', y: 50 + '%', overlay: true })
-      }
+      },
+      editForm: false
     }
   }
 }

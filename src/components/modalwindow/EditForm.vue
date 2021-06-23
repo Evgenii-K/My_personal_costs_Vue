@@ -1,69 +1,127 @@
 <template>
-  <div :class="$style.wrapper">
-    <div @click="descriptionEmpty = false">
-      <input
-        :class="[$style.input__description, $style.input]"
-        v-model="itemList.description"
-        type="text"
-        placeholder="Payment Description"
+  <v-card>
+    <v-card-title>
+      <span class="text-h5">Edit item</span>
+    </v-card-title>
+    <v-card-text>
+      <v-container>
+        <v-row>
+          <v-col>
+            <v-select
+              v-model="itemList.category"
+              :items="getDescription"
+              label="Payment Category"
+              :rules="[v => !!v || 'Category is required']"
+            ></v-select>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <v-text-field
+              v-model="itemList.value"
+              label="Payment value"
+              type="number"
+            ></v-text-field>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <v-dialog
+              ref="dialog"
+              v-model="modal"
+              :return-value.sync="itemList.date"
+              width="290px"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  v-model="itemList.date"
+                  label="Picker in dialog"
+                  prepend-icon="mdi-calendar"
+                  readonly
+                  v-bind="attrs"
+                  v-on="on"
+                ></v-text-field>
+              </template>
+              <v-date-picker
+                v-model="itemList.date"
+                scrollable
+              >
+                <v-spacer></v-spacer>
+                <v-btn
+                  text
+                  color="primary"
+                  @click="modal = false"
+                >
+                  Cancel
+                </v-btn>
+                <v-btn
+                  text
+                  color="primary"
+                  @click="$refs.dialog.save(itemList.date)"
+                >
+                  OK
+                </v-btn>
+              </v-date-picker>
+            </v-dialog>
+          </v-col>
+        </v-row>
+      </v-container>
+      <small>*indicates required field</small>
+    </v-card-text>
+    <v-card-actions>
+      <v-spacer></v-spacer>
+      <v-btn
+        color="blue darken-1"
+        text
+        @click="$emit('close')"
       >
-      <input
-        :class="[$style.input__amount, $style.input]"
-        type="number"
-        step="any"
-        placeholder="Payment amount"
-        v-model="itemList.amount"
+        Cancel
+      </v-btn>
+      <v-btn
+        color="blue darken-1"
+        text
+        @click="add"
       >
-      <input
-        :class="[$style.input__date, $style.input]"
-        type="date"
-        placeholder="Payment date"
-        v-model="itemList.date"
-      >
-    </div>
-    <button
-      :class="$style.btn__add"
-      @click="add"
-    >
-      Apply changes
-    </button>
-    <button
-      :class="$style.btn__add"
-      @click="$modal.close()"
-    >
-      Cancel
-    </button>
-    <span
-      :class="$style.span"
-      v-if="descriptionEmpty"
-    >
-      You need to add a description
-    </span>
-  </div>
+        Apply
+      </v-btn>
+    </v-card-actions>
+  </v-card>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'EditForm',
   data () {
     return {
       itemList: {
-        description: '',
-        amount: '',
+        category: '',
+        value: '',
         date: ''
       },
-      descriptionEmpty: false
+      descriptionEmpty: false,
+      modal: false
     }
   },
   props: {
     item: Object
   },
+  created () {
+    if (this.$route.params.description) {
+      this.itemList.category = this.$route.params.description
+      if (this.$route.query.value) {
+        this.itemList.value = +this.$route.query.value
+      }
+      this.itemList.date = this.getCurrentDate()
+      this.$router.push({ name: 'dashboard' })
+    }
+  },
   mounted () {
-    this.itemList.description = this.item.category
-    this.itemList.amount = this.item.value
-    this.itemList.date = this.item.date.split('.').reverse().join('-')
+    if (this.item) {
+      this.itemList = Object.assign({}, this.item)
+      this.itemList.date = this.itemList.date.split('.').reverse().join('-')
+    }
   },
   methods: {
     ...mapActions([
@@ -77,13 +135,13 @@ export default {
       return `${y}-${m}-${d}`
     },
     add () {
-      if (!this.itemList.description) {
+      if (!this.itemList.category) {
         this.descriptionEmpty = true
         return
       }
 
-      if (!this.itemList.amount || isNaN(this.itemList.amount)) {
-        this.itemList.amount = 0
+      if (!this.itemList.value || isNaN(this.itemList.value)) {
+        this.itemList.value = 0
       }
 
       if (!this.itemList.date) {
@@ -95,88 +153,23 @@ export default {
       const newItem = {
         id: this.item.id,
         date: newDate,
-        category: this.itemList.description,
-        value: this.itemList.amount
+        category: this.itemList.category,
+        value: this.itemList.value
       }
 
       this.editItem(newItem)
 
-      this.$modal.close()
+      this.$emit('close')
     }
+  },
+  computed: {
+    ...mapGetters([
+      'getDescription'
+    ])
   }
 }
 </script>
 
-<style module lang="scss">
-  .wrapper {
-    border-radius: 10px;
-    background: white;
-    position: fixed;
-    transform: translate(-50%, -50%);
-    max-width: 100%;
-    padding: 20px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-  }
+<style>
 
-  .input {
-    display: block;
-    font-size: 16px;
-    font-weight: 500;
-    box-sizing: border-box;
-    padding: 5px;
-    min-width: 100%;
-    margin-bottom: 10px;
-    border: 0.1px solid grey;
-    border-radius: 5px;
-    box-shadow: 3px 3px rgba(0, 0, 0, 0.1);
-
-    &__description {
-      display: inline-block;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      -ms-appearance: none;
-      appearance: none;
-    }
-
-    &__amount {
-      &::-webkit-outer-spin-button,
-      &::-webkit-inner-spin-button {
-          /* display: none; <- Crashes Chrome on hover */
-          -webkit-appearance: none;
-          margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
-      }
-    }
-  }
-
-  .btn__add {
-    font-size: 14px;
-    font-weight: 500;
-    color: whitesmoke;
-    background-color: rgba(37, 167, 154, 1.0);
-    width: 160px;
-    height: 36px;
-    cursor: pointer;
-    border: 0;
-    box-shadow: 3px 3px rgba(0, 0, 0, 0.1);
-    outline: none;
-    border-radius: 5px;
-    margin: 0 5px;
-
-    &::-moz-focus-inner {
-    padding: 0;
-    border: 0;
-    }
-
-    &:hover {
-      transform: translateY(3px) translateX(3px);
-      box-shadow: 0px 0px rgba(0, 0, 0, 0.1);
-    }
-  }
-
-  .span {
-    font-size: 16px;
-    font-weight: 700;
-    color: red;
-    margin-left: 15px;
-  }
 </style>
