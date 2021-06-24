@@ -1,17 +1,43 @@
 <template>
   <v-card>
     <v-card-title>
-      <span class="text-h5">Edit item</span>
+      <span class="text-h5">Add new cost</span>
     </v-card-title>
     <v-card-text>
       <v-container>
-        <v-row>
-          <v-col>
+        <v-row align="center">
+          <v-col
+            cols="9"
+          >
             <v-select
               v-model="itemList.category"
               :items="getDescription"
-              label="Payment Category"
+              label="Payment Category *"
             ></v-select>
+          </v-col>
+          <v-col
+            cols="3"
+          >
+            <v-dialog
+              v-model="addCategory"
+              max-width="300"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  text
+                  color="blue darken-1"
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  <v-icon dark>
+                    mdi-plus
+                  </v-icon>
+                </v-btn>
+              </template>
+              <AddCategory
+                @close="addCategory = false"
+              />
+            </v-dialog>
           </v-col>
         </v-row>
         <v-row>
@@ -81,7 +107,7 @@
         text
         @click="add"
       >
-        Apply
+        Add
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -92,6 +118,9 @@ import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'EditForm',
+  components: {
+    AddCategory: () => import('./AddCategory')
+  },
   data () {
     return {
       itemList: {
@@ -99,21 +128,25 @@ export default {
         value: '',
         date: ''
       },
-      modal: false
+      descriptionEmpty: false,
+      modal: false,
+      addCategory: false
     }
   },
-  props: {
-    item: Object
-  },
-  mounted () {
-    if (this.item) {
-      this.itemList = Object.assign({}, this.item)
-      this.itemList.date = this.itemList.date.split('.').reverse().join('-')
+  created () {
+    this.itemList.category = this.getDescription[0]
+    if (this.$route.params.description) {
+      this.itemList.category = this.$route.params.description
+      if (this.$route.query.value) {
+        this.itemList.value = +this.$route.query.value
+      }
+      this.itemList.date = this.getCurrentDate()
+      this.$router.push({ name: 'dashboard' })
     }
   },
   methods: {
     ...mapActions([
-      'editItem'
+      'addItem'
     ]),
     getCurrentDate () {
       const today = new Date()
@@ -134,13 +167,12 @@ export default {
       const newDate = this.itemList.date.split('-').reverse().join('.')
 
       const newItem = {
-        id: this.item.id,
         date: newDate,
         category: this.itemList.category,
         value: this.itemList.value
       }
 
-      this.editItem(newItem)
+      this.addItem(newItem)
 
       this.$emit('close')
     }

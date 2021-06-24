@@ -7,11 +7,17 @@ export default new Vuex.Store({
   state: {
     paymentsListLength: Number,
     paymentsList: [],
-    description: ['Food', 'Shoes', 'Cellular', 'Entertainment', 'Transport']
+    description: ['Food', 'Shoes', 'Cellular', 'Entertainment', 'Transport'],
+    options: {}
   },
   mutations: {
     setPaymentsList (state, payload) {
       state.paymentsList = payload
+      state.paymentsList.forEach(item => {
+        if (!state.description.includes(item.category)) {
+          state.description.push(item.category)
+        }
+      })
     },
     setPaymentsListLength (state, payload) {
       state.paymentsListLength = payload
@@ -65,7 +71,7 @@ export default new Vuex.Store({
       await dispatch('fetchPaymentsListLength')
     },
     // Удаление элемнета списка
-    async removeFromList ({ commit, dispatch }, item) {
+    async removeFromList ({ dispatch }, item) {
       await fetch('/removeItem', {
         method: 'post',
         body: JSON.stringify(item),

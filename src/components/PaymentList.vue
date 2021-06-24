@@ -23,16 +23,7 @@
             </v-btn>
           </template>
           <v-list>
-            <v-list-item @click.stop="editForm = true"><v-list-item-title><v-icon left>mdi-pencil</v-icon>Edit</v-list-item-title></v-list-item>
-              <v-dialog
-                v-model="editForm"
-                max-width="290"
-              >
-                <EditForm
-                  :item="item"
-                  @close="editForm = false"
-                />
-              </v-dialog>
+            <v-list-item @click.stop="editFormShow(item)"><v-list-item-title><v-icon left>mdi-pencil</v-icon>Edit</v-list-item-title></v-list-item>
             <v-list-item @click.stop="dialogDelete(item)"><v-list-item-title><v-icon left>mdi-basket</v-icon>Delete</v-list-item-title></v-list-item>
           </v-list>
         </v-menu>
@@ -46,6 +37,15 @@
         :item='selectedItem'
         @deleteItem='deleteItem(selectedItem)'
         @close='dialog = false'
+      />
+    </v-dialog>
+    <v-dialog
+      v-model="editForm"
+      max-width="290"
+    >
+      <EditForm
+        :item="selectedItem"
+        @close="editForm = false"
       />
     </v-dialog>
   </div>
@@ -86,6 +86,10 @@ export default {
       },
       deep: true
     },
+    // Обновление талицы при добавлении элемента списка
+    getPaymentsListLength () {
+      this.getDataFromApi()
+    },
     // При удалении всех элементов на странице переходим на страницу назад
     items () {
       if (!this.items.length && this.options.page > 1) {
@@ -112,6 +116,10 @@ export default {
     dialogDelete (item) {
       this.selectedItem = item
       this.dialog = true
+    },
+    editFormShow (item) {
+      this.selectedItem = item
+      this.editForm = true
     },
     async deleteItem (item) {
       console.log('PaymentList: ', item)

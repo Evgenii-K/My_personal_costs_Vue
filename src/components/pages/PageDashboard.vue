@@ -5,16 +5,28 @@
     <div class="text-h5 text-sm-h3 pb-4">My personal costs</div>
     <v-row>
       <v-col>
-        <v-btn
-          dark
-          color="teal"
-          @click="$modal.show('paymentform', { x: 50 + '%', y: 50 + '%', overlay: true })"
+        <v-dialog
+          v-model="paymentForm"
+          max-width="350"
         >
-          ADD NEW COST
-          <v-icon dark>
-            mdi-plus
-          </v-icon>
-        </v-btn>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              dark
+              color="teal"
+              v-bind="attrs"
+              v-on="on"
+            >
+              ADD NEW COST
+              <v-icon dark>
+                mdi-plus
+              </v-icon>
+            </v-btn>
+          </template>
+          <Form
+            @close="paymentForm = false"
+            v-if="paymentForm"
+          />
+        </v-dialog>
         <v-row
           align="center"
           justify="space-between"
@@ -27,21 +39,12 @@
               :key="key"
               :to="`/add/payment/${key}?value=${value}`"
               class="my-2 mr-2"
-              @click="editForm = true"
+              @click="paymentForm = true"
             >
               {{ key }}
             </v-btn>
           </v-col>
         </v-row>
-        <v-dialog
-          v-model="editForm"
-          max-width="290"
-          v-if="editForm"
-        >
-          <EditForm
-            @close="editForm = false"
-          />
-        </v-dialog>
         <PaymentList />
       </v-col>
       <v-col>
@@ -53,12 +56,12 @@
 
 <script>
 import PaymentList from '../PaymentList'
-import EditForm from '../modalwindow/EditForm.vue'
+import Form from '../modalwindow/Form.vue'
 
 export default {
   components: {
     PaymentList,
-    EditForm
+    Form
   },
   data () {
     return {
@@ -68,7 +71,7 @@ export default {
         Transport: 50,
         Entertainment: ''
       },
-      editForm: false
+      paymentForm: false
     }
   }
 }
