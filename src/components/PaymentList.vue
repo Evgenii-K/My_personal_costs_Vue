@@ -33,51 +33,33 @@
                   @close="editForm = false"
                 />
               </v-dialog>
-            <v-list-item @click.stop="dialog = true"><v-list-item-title><v-icon left>mdi-basket</v-icon>Delete</v-list-item-title></v-list-item>
-              <v-dialog
-                v-model="dialog"
-                max-width="290"
-              >
-                <v-card>
-                  <v-card-title class="text-h5">
-                    Do you really want to delete item?
-                  </v-card-title>
-
-                  <v-card-actions>
-                    <v-spacer></v-spacer>
-
-                    <v-btn
-                      color="blue darken-1"
-                      text
-                      @click="dialog = false"
-                    >
-                      Cencel
-                    </v-btn>
-
-                    <v-btn
-                      color="red darken-1"
-                      text
-                      @click="deleteItem(item)"
-                    >
-                      Delete
-                    </v-btn>
-                  </v-card-actions>
-                </v-card>
-              </v-dialog>
+            <v-list-item @click.stop="dialogDelete(item)"><v-list-item-title><v-icon left>mdi-basket</v-icon>Delete</v-list-item-title></v-list-item>
           </v-list>
         </v-menu>
       </template>
     </v-data-table>
+    <v-dialog
+      v-model="dialog"
+      max-width="290"
+    >
+      <DeleteItem
+        :item='selectedItem'
+        @deleteItem='deleteItem(selectedItem)'
+        @close='dialog = false'
+      />
+    </v-dialog>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import EditForm from './modalwindow/EditForm.vue'
+import DeleteItem from './modalwindow/DeleteItem.vue'
 
 export default {
   components: {
-    EditForm
+    EditForm,
+    DeleteItem
   },
   name: 'PaymentList',
   data () {
@@ -92,10 +74,12 @@ export default {
       loading: true,
       options: {},
       dialog: false,
-      editForm: false
+      editForm: false,
+      selectedItem: Object
     }
   },
   watch: {
+    // Следим за изменением параметров таблици (пагинация, кол. элементов на странице и тд)
     options: {
       handler () {
         this.getDataFromApi()
@@ -125,7 +109,12 @@ export default {
     ...mapActions([
       'fetchPaymentsListLength', 'fetchFromServe', 'removeFromList'
     ]),
+    dialogDelete (item) {
+      this.selectedItem = item
+      this.dialog = true
+    },
     async deleteItem (item) {
+      console.log('PaymentList: ', item)
       this.dialog = false
       await this.removeFromList(item)
       await this.getDataFromApi()
