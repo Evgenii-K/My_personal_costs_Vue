@@ -48,7 +48,7 @@
         <PaymentList />
       </v-col>
       <v-col>
-        Chart
+        <DoughnutChart />
       </v-col>
     </v-row>
   </v-container>
@@ -57,11 +57,13 @@
 <script>
 import PaymentList from '../PaymentList'
 import Form from '../modalwindow/Form.vue'
+import DoughnutChart from '../DoughnutChart'
 
 export default {
   components: {
     PaymentList,
-    Form
+    Form,
+    DoughnutChart
   },
   data () {
     return {

@@ -65,6 +65,37 @@ app.get('/getLength', (req, res) => {
   })
 })
 
+app.get('/getChartData', (req, res) => {
+  fs.readFile('./dist/database/paymentListCopy.json', 'utf8', (err, data) => {
+    if (err) {
+      console.log(`Get chart data err: ${err}`)
+    }
+    data = JSON.parse(data)
+    data = Object.entries(data)
+    data = data.flat()[1]
+
+    const uniqueCategory = []
+
+    let sumValue = 0
+
+    const resData = []
+
+    for (const current of data) {
+      if (!uniqueCategory.includes(current.category)) {
+        uniqueCategory.push(current.category)
+
+        sumValue = data.filter(item => item.category === current.category).reduce((sum, cur) => {
+          return sum + cur.value
+        }, 0)
+
+        resData.push({ labels: current.category, datasets: sumValue })
+      }
+    }
+
+    res.send(resData)
+  })
+})
+
 // Добавленеие элемента списка
 app.post('/addItem', (req, res) => {
   const filePath = './dist/database/paymentListCopy.json'

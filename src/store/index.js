@@ -8,7 +8,11 @@ export default new Vuex.Store({
     paymentsListLength: Number,
     paymentsList: [],
     description: ['Food', 'Shoes', 'Cellular', 'Entertainment', 'Transport'],
-    options: {}
+    options: {},
+    chartData: {
+      labels: [],
+      datasets: []
+    }
   },
   mutations: {
     setPaymentsList (state, payload) {
@@ -45,13 +49,14 @@ export default new Vuex.Store({
   },
   actions: {
     // Реализация получения данных с cервера в виде массива объектов
-    fetchFromServe ({ commit }, options) {
+    async fetchFromServe ({ commit }, options) {
       const { sortBy, sortDesc, page, itemsPerPage } = options
-      fetch(`/getList?page=${page}&sortBy=${sortBy}&sortDesc=${sortDesc}&itemsPerPage=${itemsPerPage}`)
+      await fetch(`/getList?page=${page}&sortBy=${sortBy}&sortDesc=${sortDesc}&itemsPerPage=${itemsPerPage}`)
         .then(res => res.json())
         .then(res => Object.values(res))
         .then(res => res.flat())
         .then(list => commit('setPaymentsList', list))
+      await fetch('/getChartData')
     },
     // Запрос колличества элементов
     fetchPaymentsListLength ({ commit }) {
