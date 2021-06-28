@@ -30,12 +30,12 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 ### Main page
 
-![Main](assets/Main_page.jpg)
+![Main](src/assets/Main_page.jpg)
 
 ### Add new cost form
 
-![Add](assets/Add_new_cost.jpg)
+![Add](src/assets/Add_new_cost.jpg)
 
 ### Edit item form
 
-![Edit](assets/Edit_item.jpg)
+![Edit](src/assets/Edit_item.jpg)
