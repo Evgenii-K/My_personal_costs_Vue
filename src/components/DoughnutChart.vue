@@ -1,23 +1,14 @@
 <script>
-import { Doughnut } from 'vue-chartjs'
+import { Doughnut, mixins } from 'vue-chartjs'
+import { mapGetters } from 'vuex'
+const { reactiveData } = mixins
 
 export default {
   extends: Doughnut,
+  mixins: [reactiveData],
   data () {
     return {
-      data: {
-        labels: [
-          'Red',
-          'Blue',
-          'Yellow'
-        ],
-        datasets: [{
-          label: 'My First Dataset',
-          data: [300, 50, 100],
-          backgroundColor: [],
-          hoverOffset: 4
-        }]
-      },
+      chartData: '',
       options: {
         title: {
           display: true,
@@ -41,13 +32,18 @@ export default {
       }
     }
   },
-  created () {
-    this.data.datasets[0].data.forEach(() => {
-      this.data.datasets[0].backgroundColor.push(this.dynamicColors())
-    })
+  watch: {
+    getChartData () {
+      this.loading()
+    }
   },
   mounted () {
-    this.renderChart(this.data, this.options)
+    this.renderChart(this.chartData, this.options)
+  },
+  computed: {
+    ...mapGetters([
+      'getChartData'
+    ])
   },
   methods: {
     dynamicColors () {
@@ -55,6 +51,28 @@ export default {
       const g = Math.floor(Math.random() * 255)
       const b = Math.floor(Math.random() * 255)
       return `rgb(${r},${g},${b})`
+    },
+    randomBackground (data) {
+      if (!data) return
+
+      const color = []
+
+      data.forEach(() => {
+        color.push(this.dynamicColors())
+      })
+
+      return color
+    },
+    loading () {
+      const { labels, datasets } = this.getChartData
+
+      this.chartData = {
+        labels: labels,
+        datasets: [{
+          data: datasets,
+          backgroundColor: this.randomBackground(datasets)
+        }]
+      }
     }
   }
 }

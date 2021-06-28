@@ -105,11 +105,13 @@ export default {
   props: {
     item: Object
   },
-  mounted () {
-    if (this.item) {
-      this.itemList = Object.assign({}, this.item)
-      this.itemList.date = this.itemList.date.split('.').reverse().join('-')
+  watch: {
+    item () {
+      this.loadingItem()
     }
+  },
+  mounted () {
+    this.loadingItem()
   },
   methods: {
     ...mapActions([
@@ -137,12 +139,18 @@ export default {
         id: this.item.id,
         date: newDate,
         category: this.itemList.category,
-        value: this.itemList.value
+        value: +this.itemList.value
       }
 
       this.editItem(newItem)
 
       this.$emit('close')
+    },
+    loadingItem () {
+      if (this.item) {
+        this.itemList = Object.assign({}, this.item)
+        this.itemList.date = this.itemList.date.split('.').reverse().join('-')
+      }
     }
   },
   computed: {

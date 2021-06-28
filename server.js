@@ -15,7 +15,7 @@ app.use(bodyParser.json())
 // Получение эментов страницы с сортировкой
 app.get('/getList', (req, res) => {
   const { sortBy, sortDesc, page, itemsPerPage } = req.query
-  const filePath = './dist/database/paymentListCopy.json'
+  const filePath = './dist/database/paymentList.json'
 
   fs.readFile(filePath, 'utf8', (err, data) => {
     if (err) {
@@ -53,7 +53,7 @@ app.get('/getList', (req, res) => {
 
 // Получение длины списка
 app.get('/getLength', (req, res) => {
-  fs.readFile('./dist/database/paymentListCopy.json', 'utf8', (err, data) => {
+  fs.readFile('./dist/database/paymentList.json', 'utf8', (err, data) => {
     if (err) {
       console.log(`Get length err: ${err}`)
     }
@@ -65,8 +65,9 @@ app.get('/getLength', (req, res) => {
   })
 })
 
+// Получение данных для графика
 app.get('/getChartData', (req, res) => {
-  fs.readFile('./dist/database/paymentListCopy.json', 'utf8', (err, data) => {
+  fs.readFile('./dist/database/paymentList.json', 'utf8', (err, data) => {
     if (err) {
       console.log(`Get chart data err: ${err}`)
     }
@@ -98,7 +99,7 @@ app.get('/getChartData', (req, res) => {
 
 // Добавленеие элемента списка
 app.post('/addItem', (req, res) => {
-  const filePath = './dist/database/paymentListCopy.json'
+  const filePath = './dist/database/paymentList.json'
   let item = req.body
 
   fs.readFile(filePath, 'utf8', (err, data) => {
@@ -133,7 +134,7 @@ app.post('/addItem', (req, res) => {
 
 // Удаление элемента из списка
 app.post('/removeItem', (req, res) => {
-  const filePath = './dist/database/paymentListCopy.json'
+  const filePath = './dist/database/paymentList.json'
   const item = req.body
 
   fs.readFile(filePath, 'utf8', (err, data) => {
@@ -159,8 +160,9 @@ app.post('/removeItem', (req, res) => {
 
 // Редактирование элемента списка
 app.post('/editItem', (req, res) => {
-  const filePath = './dist/database/paymentListCopy.json'
+  const filePath = './dist/database/paymentList.json'
   const item = req.body
+  console.log(item)
 
   fs.readFile(filePath, 'utf8', (err, data) => {
     if (err) {

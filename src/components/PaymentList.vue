@@ -65,7 +65,7 @@ export default {
   data () {
     return {
       headers: [
-        { text: '#', value: 'index', width: '30px' },
+        { text: '#', value: 'index', width: '30px', sortable: false },
         { text: 'Date', value: 'date', width: '100px' },
         { text: 'Category', value: 'category', width: '400px' },
         { text: 'Value', value: 'value', width: '100px' },
@@ -111,7 +111,7 @@ export default {
   },
   methods: {
     ...mapActions([
-      'fetchPaymentsListLength', 'fetchFromServe', 'removeFromList'
+      'fetchPaymentsListLength', 'fetchFromServe', 'removeFromList', 'fetchChartData'
     ]),
     dialogDelete (item) {
       this.selectedItem = item
@@ -122,20 +122,21 @@ export default {
       this.editForm = true
     },
     async deleteItem (item) {
-      console.log('PaymentList: ', item)
       this.dialog = false
       await this.removeFromList(item)
       await this.getDataFromApi()
     },
     getDataFromApi () {
       this.loading = true
-      this.fetchFromServe(this.options).then(() => {
-        this.loading = false
-      })
+      this.fetchFromServe(this.options)
+        .then(() => {
+          this.loading = false
+        })
     }
   },
   created () {
     this.fetchPaymentsListLength()
+    this.fetchChartData()
   }
 }
 </script>

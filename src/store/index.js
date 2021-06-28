@@ -9,10 +9,7 @@ export default new Vuex.Store({
     paymentsList: [],
     description: ['Food', 'Shoes', 'Cellular', 'Entertainment', 'Transport'],
     options: {},
-    chartData: {
-      labels: [],
-      datasets: []
-    }
+    chartData: {}
   },
   mutations: {
     setPaymentsList (state, payload) {
@@ -40,12 +37,19 @@ export default new Vuex.Store({
     // Добавление собственной категории
     editDescription (state, payload) {
       state.description.push(payload)
+    },
+    setChartData (state, payload) {
+      state.chartData = {
+        labels: payload.map(item => item.labels),
+        datasets: payload.map(item => item.datasets)
+      }
     }
   },
   getters: {
     getPaymentsListLength: state => state.paymentsListLength,
     getPaymentsListData: state => state.paymentsList,
-    getDescription: state => state.description
+    getDescription: state => state.description,
+    getChartData: state => state.chartData
   },
   actions: {
     // Реализация получения данных с cервера в виде массива объектов
@@ -56,7 +60,12 @@ export default new Vuex.Store({
         .then(res => Object.values(res))
         .then(res => res.flat())
         .then(list => commit('setPaymentsList', list))
-      await fetch('/getChartData')
+    },
+    fetchChartData ({ commit }) {
+      fetch('/getChartData')
+        .then(res => res.json())
+        .then(res => Object.values(res))
+        .then(chartData => commit('setChartData', chartData))
     },
     // Запрос колличества элементов
     fetchPaymentsListLength ({ commit }) {
@@ -74,6 +83,7 @@ export default new Vuex.Store({
         }
       })
       await dispatch('fetchPaymentsListLength')
+      await dispatch('fetchChartData')
     },
     // Удаление элемнета списка
     async removeFromList ({ dispatch }, item) {
@@ -85,17 +95,19 @@ export default new Vuex.Store({
         }
       })
       await dispatch('fetchPaymentsListLength')
+      await dispatch('fetchChartData')
     },
     // Изменение элемента списка
-    editItem ({ commit }, item) {
-      fetch('/editItem', {
+    async editItem ({ commit, dispatch }, item) {
+      await fetch('/editItem', {
         method: 'post',
         body: JSON.stringify(item),
         headers: {
           'Content-Type': 'application/json'
         }
       })
-      commit('editPayment', item)
+      await dispatch('fetchChartData')
+      await commit('editPayment', item)
     }
   }
 })
