@@ -1,4 +1,4 @@
-# my_personal_costs_vue
+# My personal costs on Vue
 
 ## Project setup
 ```
@@ -27,3 +27,15 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+### Main page
+
+![Main](src/assets/Main_page.jpg)
+
+### Add new cost form
+
+![Add](src/assets/Add_new_cost.jpg)
+
+### Edit item form
+
+![Edit](src/assets/Edit_item.jpg)
