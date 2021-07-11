@@ -1,82 +1,83 @@
 <template>
-  <div :class="$style.paymentList">
-    <div v-for="(item, key) in itemsOnPage" :key="key" :class="$style.itemName">
-      <div :class="$style.itemName__id">{{ item.id }}</div>
-      <div :class="$style.itemName__date">{{ item.date }}</div>
-      <div :class="$style.itemName__cat">{{ item.category }}</div>
-      <div :class="$style.itemName__value">{{ item.value }}</div>
+  <div>
+    <header>
+      <div :class="[$style.item__id, $style.item__header]">&#35;</div>
+      <div :class="[$style.item__date, $style.item__header]">Date</div>
+      <div :class="[$style.item__cat, $style.item__header]">Category</div>
+      <div :class="[$style.item__value, $style.item__header]">Value</div>
+    </header>
+    <div :class="$style.paymentList">
+      <div v-for="(item, key) in itemsOnPage" :key="key" :class="$style.itemName">
+        <div :class="[$style.item__id, $style.item]">{{ item.id }}</div>
+        <div :class="[$style.item__date, $style.item]">{{ item.date }}</div>
+        <div :class="[$style.item__cat, $style.item]">{{ item.category }}</div>
+        <div :class="[$style.item__value, $style.item]">{{ item.value }}</div>
+      </div>
     </div>
-    <button
-      @click="currentPage > 1 ? currentPage-- : '' "
-    >
-      Previous
-    </button>
-    <div v-for="n in pages" :key="'Page' + n">
-      <button @click="currentPage = n">
-        {{ n }}
-      </button>
-    </div>
-    <button
-      @click="getPaymentListLength > currentPage ? currentPage++ : ''"
-    >
-      Next
-    </button>
+    <Pagination />
   </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import Pagination from './PyamentPagination'
 
 export default {
   name: 'PaymentList',
+  components: {
+    Pagination
+  },
   data () {
     return {
-      currentPage: 1
+      currentPage: Number
     }
   },
   watch: {
     itemsOnPage () {
-      this.fetchFromServe(this.currentPage)
       if (!this.itemsOnPage) return
       // если на странице удалён последний элемент и страница не первая то переходим на предыдущую страницу
       if (this.itemsOnPage.length === 0 && this.currentPage > 1) {
         this.currentPage--
       }
+    },
+    '$route.path': function () {
+      if (this.$route.params.page) {
+        this.currentPage = this.$route.params.page
+      }
     }
   },
   computed: {
     ...mapGetters([
-      'getPaymentListLength', 'getPaymentsListData'
+      'getPaymentsListData'
     ]),
     itemsOnPage () {
       const itemsOnPage = this.getPaymentsListData(this.currentPage)
+      this.fetchCurrentPage(this.currentPage)
       return itemsOnPage
-    },
-    pages () {
-      const num = this.getPaymentListLength
-      return num
     }
   },
   methods: {
     ...mapActions([
-      'fetchPaymentsListLength', 'fetchFromServe'
+      'fetchCurrentPage'
     ])
   },
-  created () {
-    this.fetchPaymentsListLength()
-    this.fetchFromServe(this.currentPage)
+  mounted () {
+    this.currentPage = this.$route.params.page
   }
 }
 </script>
 
 <style module lang="scss">
-  .paymentList {}
+  .paymentList {
+    width: 550px;
+  }
 
-  .itemName {
-    font-size: 12px;
+  .item {
+    font-size: 18px;
     font-weight: 500;
     padding-top: 5px;
     padding-bottom: 5px;
+    border-top: 1px solid lightgray;
 
     &__id {
       display: inline-block;
@@ -98,8 +99,11 @@ export default {
       min-width: 100px;
     }
 
-    // &:not(:last-child) {
-    //   border-bottom: 1px solid lightgray;
-    // }
+    &__header {
+      font-size: 16px;
+      font-weight: 900;
+      padding-top: 5px;
+      padding-bottom: 5px;
+    }
   }
 </style>

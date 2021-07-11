@@ -1,11 +1,16 @@
+// const history = require('connect-history-api-fallback')
 const fs = require('fs')
 const express = require('express')
 const bodyParser = require('body-parser')
-const app = express()
-const port = process.env.PORT || 5000
 
-app.use(express.static(__dirname + '/dist'))
+const app = express()
+
+const port = process.env.PORT || 5000
+const root = `${__dirname}/dist`
+
+app.use(express.static(root))
 app.use(bodyParser.json())
+// app.use(history())
 
 app.get('/database/:page', (req, res) => {
   const page = req.params.page
@@ -33,7 +38,8 @@ app.get('/lengthList', (req, res) => {
   })
 })
 
-app.post('/fetchAddToList', (req, res) => {
+// Добавленеие элемента списка
+app.post('/addToList', (req, res) => {
   const filePath = './dist/database/paymentList.json'
   let item = req.body
 
@@ -71,7 +77,7 @@ app.post('/fetchAddToList', (req, res) => {
       if (err) {
         console.log(`Error write: ${err}`)
       }
-      res.send(item)
+      res.send(data)
     })
   })
 })
