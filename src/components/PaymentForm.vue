@@ -1,15 +1,22 @@
 <template>
   <div>
     <form v-on:submit.prevent="add">
-      <div
-        v-for="(item, key) in Object.keys(itemList)"
-        :key="key"
-        @click="descriptionEmpty = false"
-      >
+      <div @click="descriptionEmpty = false">
+        <select v-model="itemList.description">
+          <option disabled value="">Payment description</option>
+          <option v-for="(option, key) in options" :key="key">
+            {{ option }}
+          </option>
+        </select>
         <input
-          :type="item == 'amount' ? 'number' : 'text'"
-          :placeholder="`Payment ${item}`"
-          v-model="itemList[item]"
+          type="number"
+          placeholder="Payment amount"
+          v-model="itemList.amount"
+        >
+        <input
+          type="text"
+          placeholder="Payment date"
+          v-model="itemList.date"
         >
       </div>
       <button>Add</button>
@@ -19,6 +26,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
   name: 'PaymentForm',
   data () {
@@ -28,10 +37,14 @@ export default {
         amount: '',
         date: ''
       },
-      descriptionEmpty: false
+      descriptionEmpty: false,
+      options: ['Food', 'Shoes', 'Cellular']
     }
   },
   methods: {
+    ...mapActions([
+      'addItem'
+    ]),
     getCurrentDate () {
       const today = new Date()
       const d = today.getDate()
@@ -55,7 +68,7 @@ export default {
         value: this.itemList.amount
       }
 
-      this.$emit('addToList', newItem)
+      this.addItem(newItem)
     }
   }
 }

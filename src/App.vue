@@ -1,14 +1,11 @@
 <template>
   <div id="app">
-    <header>
+    <header :class="$style.header">
       My personal costs
     </header>
-    <button @click="showForm = !showForm">ADD NEW COST +</button>
-    <PaymentForm
-      @addToList="addToList"
-      v-show="showForm"
-    />
-    <PaymentList :list="paymentlist"/>
+    <button @click="showForm = !showForm" :class="$style.btn__add">ADD NEW COST +</button>
+    <PaymentForm v-show="showForm"/>
+    <PaymentList />
   </div>
 </template>
 
@@ -24,34 +21,41 @@ export default {
   },
   data () {
     return {
-      paymentlist: [
-        {
-          date: '13.05.2021',
-          category: 'Food',
-          value: '3500'
-        },
-        {
-          date: '14.05.2021',
-          category: 'Shoes',
-          value: '4200'
-        },
-        {
-          date: '13.05.2021',
-          category: 'Cellular',
-          value: '440'
-        }
-      ],
       showForm: false
-    }
-  },
-  methods: {
-    addToList (newItem) {
-      this.paymentlist = [...this.paymentlist, newItem]
     }
   }
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" module>
+  .header {
+    font-size: 36px;
+    font-weight: 700;
+  }
+  .btn__add {
+    font-size: 14px;
+    font-weight: 500;
+    color: whitesmoke;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    background-color: rgba(37, 167, 154, 1.0);
+    width: 160px;
+    height: 36px;
+    cursor: pointer;
+    border: 0;
+    box-shadow: 3px 3px rgba(0, 0, 0, 0.1);
+    outline: none;
+    border-radius: 5px;
 
+    &::-moz-focus-inner {
+    padding: 0;
+    border: 0;
+    }
+
+    &:hover {
+      transform: translateY(3px) translateX(3px);
+      box-shadow: 0px 0px rgba(0, 0, 0, 0.1);
+      // transform: translateX(3px);
+    }
+  }
 </style>

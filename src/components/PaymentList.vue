@@ -1,7 +1,10 @@
 <template>
-  <div>
-    <div v-for="(item, key) in itemsOnPage" :key="key">
-      {{ (currentPage - 1) * 10 + (key + 1) }} {{ item.date }} {{ item.category }} {{ item.value }}
+  <div :class="$style.paymentList">
+    <div v-for="(item, key) in itemsOnPage" :key="key" :class="$style.itemName">
+      <div :class="$style.itemName__id">{{ item.id }}</div>
+      <div :class="$style.itemName__date">{{ item.date }}</div>
+      <div :class="$style.itemName__cat">{{ item.category }}</div>
+      <div :class="$style.itemName__value">{{ item.value }}</div>
     </div>
     <button
       @click="currentPage > 1 ? currentPage-- : '' "
@@ -14,7 +17,7 @@
       </button>
     </div>
     <button
-      @click="list.length > endPage ? currentPage++ : ''"
+      @click="getPaymentListLength > currentPage ? currentPage++ : ''"
     >
       Next
     </button>
@@ -22,6 +25,8 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex'
+
 export default {
   name: 'PaymentList',
   data () {
@@ -29,39 +34,72 @@ export default {
       currentPage: 1
     }
   },
-  props: {
-    list: {
-      type: Array
-    }
-  },
   watch: {
     itemsOnPage () {
+      this.fetchFromServe(this.currentPage)
+      if (!this.itemsOnPage) return
+      // если на странице удалён последний элемент и страница не первая то переходим на предыдущую страницу
       if (this.itemsOnPage.length === 0 && this.currentPage > 1) {
         this.currentPage--
       }
     }
   },
   computed: {
-    startPage () {
-      return (this.currentPage - 1) * 10
-    },
-    endPage () {
-      return this.currentPage * 10
-    },
+    ...mapGetters([
+      'getPaymentListLength', 'getPaymentsListData'
+    ]),
     itemsOnPage () {
-      const itemsOnPage = this.list
-        .slice(this.startPage, this.endPage)
-
+      const itemsOnPage = this.getPaymentsListData(this.currentPage)
       return itemsOnPage
     },
     pages () {
-      const num = this.list.length
-      return Math.ceil(num / 10)
+      const num = this.getPaymentListLength
+      return num
     }
+  },
+  methods: {
+    ...mapActions([
+      'fetchPaymentsListLength', 'fetchFromServe'
+    ])
+  },
+  created () {
+    this.fetchPaymentsListLength()
+    this.fetchFromServe(this.currentPage)
   }
 }
 </script>
 
-<style>
+<style module lang="scss">
+  .paymentList {}
 
+  .itemName {
+    font-size: 12px;
+    font-weight: 500;
+    padding-top: 5px;
+    padding-bottom: 5px;
+
+    &__id {
+      display: inline-block;
+      min-width: 30px;
+    }
+
+    &__date {
+      display: inline-block;
+      min-width: 150px;
+    }
+
+    &__cat {
+      display: inline-block;
+      min-width: 250px;
+    }
+
+    &__value {
+      display: inline-block;
+      min-width: 100px;
+    }
+
+    // &:not(:last-child) {
+    //   border-bottom: 1px solid lightgray;
+    // }
+  }
 </style>
