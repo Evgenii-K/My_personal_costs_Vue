@@ -1,6 +1,6 @@
 <template>
   <div>
-    <header>
+    <header :class="$style.header">
       <div :class="[$style.item__id, $style.item__header]">&#35;</div>
       <div :class="[$style.item__date, $style.item__header]">Date</div>
       <div :class="[$style.item__cat, $style.item__header]">Category</div>
@@ -8,10 +8,18 @@
     </header>
     <div :class="$style.paymentList">
       <div v-for="(item, key) in itemsOnPage" :key="key" :class="$style.itemName">
-        <div :class="[$style.item__id, $style.item]">{{ item.id }}</div>
+        <div :class="[$style.item__id, $style.item]">{{ (currentPage - 1) * maxItemOnPage + (key + 1) }}</div>
         <div :class="[$style.item__date, $style.item]">{{ item.date }}</div>
         <div :class="[$style.item__cat, $style.item]">{{ item.category }}</div>
         <div :class="[$style.item__value, $style.item]">{{ item.value }}</div>
+        <div :class="[$style.wrapper__context, $style.item]">
+          <div
+            :class="$style.content"
+            @click="showModal($event, 'context', item)"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" class=""><path fill-rule="evenodd" d="M8 11.365a1.817 1.817 0 010 3.632 1.817 1.817 0 010-3.632zm0-5.191a1.826 1.826 0 010 3.65 1.826 1.826 0 010-3.65zm0-5.171a1.81 1.81 0 11-.001 3.617A1.81 1.81 0 018 1.003z"></path></svg>
+          </div>
+        </div>
       </div>
     </div>
     <Pagination />
@@ -19,7 +27,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import Pagination from './PyamentPagination'
 
 export default {
@@ -29,20 +37,15 @@ export default {
   },
   data () {
     return {
-      currentPage: Number
+      currentPage: 1,
+      maxItemOnPage: 5
     }
   },
   watch: {
-    itemsOnPage () {
-      if (!this.itemsOnPage) return
-      // если на странице удалён последний элемент и страница не первая то переходим на предыдущую страницу
-      if (this.itemsOnPage.length === 0 && this.currentPage > 1) {
-        this.currentPage--
-      }
-    },
-    '$route.path': function () {
-      if (this.$route.params.page) {
-        this.currentPage = this.$route.params.page
+    $route (to) {
+      if (to.params.page) {
+        this.currentPage = +to.params.page
+        this.fetchFromServe(this.currentPage)
       }
     }
   },
@@ -50,26 +53,49 @@ export default {
     ...mapGetters([
       'getPaymentsListData'
     ]),
+    startPage () {
+      return (this.currentPage - 1) * this.maxItemOnPage
+    },
+    endPage () {
+      return this.currentPage * this.maxItemOnPage
+    },
     itemsOnPage () {
-      const itemsOnPage = this.getPaymentsListData(this.currentPage)
-      this.fetchCurrentPage(this.currentPage)
+      const itemsOnPage = this.getPaymentsListData.slice(this.startPage, this.endPage)
       return itemsOnPage
     }
   },
   methods: {
     ...mapActions([
-      'fetchCurrentPage'
-    ])
+      'fetchPaymentsListLength', 'fetchFromServe'
+    ]),
+    showModal (event, name, item) {
+      const setting = { x: 0, y: 0, overlay: false }
+      setting.x = (event.clientX - event.layerX) + 'px'
+      setting.y = (event.clientY + event.layerY) + 'px'
+      this.$modal.show(name, setting)
+      this.$modal.contextTransfer(item)
+    }
   },
-  mounted () {
-    this.currentPage = this.$route.params.page
+  created () {
+    if (!this.$route.params.page) {
+      this.$router.push({ name: 'pagination', params: { page: 1 } })
+    }
+    this.fetchPaymentsListLength()
   }
 }
 </script>
 
 <style module lang="scss">
+  .header {
+    display: flex;
+  }
+
   .paymentList {
     width: 550px;
+  }
+
+  .itemName {
+    display: flex;
   }
 
   .item {
@@ -80,22 +106,18 @@ export default {
     border-top: 1px solid lightgray;
 
     &__id {
-      display: inline-block;
       min-width: 30px;
     }
 
     &__date {
-      display: inline-block;
       min-width: 150px;
     }
 
     &__cat {
-      display: inline-block;
       min-width: 250px;
     }
 
     &__value {
-      display: inline-block;
       min-width: 100px;
     }
 
@@ -105,5 +127,14 @@ export default {
       padding-top: 5px;
       padding-bottom: 5px;
     }
+  }
+
+  .wrapper__context {
+    position: relative;
+  }
+
+  .content > svg {
+    vertical-align: text-bottom;
+    cursor: pointer;
   }
 </style>
